@@ -1,6 +1,6 @@
 package com.uamishop.ordenes.domain;
 
-public class DirreccionEnvio {
+public class DireccionEnvio {
 	private final String calle;
     private final String colonia;
     private final String ciudad;
