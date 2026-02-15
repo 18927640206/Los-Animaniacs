@@ -13,45 +13,105 @@ import java.util.UUID;
 public class ProductoService {
 
     private final ProductoJpaRepository productoRepository;
+    private final CategoriaJpaRepository categoriaRepository;
 
-    public ProductoService(ProductoJpaRepository productoRepository) {
+    public ProductoService(ProductoJpaRepository productoRepository, CategoriaJpaRepository categoriaRepository) {
         this.productoRepository = productoRepository;
+        this.categoriaRepository = categoriaRepository;
     }
 
-    public Producto crearProducto(
-            String nombre,
-            String descripcion,
-            BigDecimal precio,
-            Categoria categoria
-    ) {
-        Money money = new Money(precio);
+    public Producto crearProducto(ProductoRequest request) {
+        Categoria categoria = categoriaRepository.findById(request.getCategoriaId())
+        .orElseThrow(() -> new RuntimeException("Categoria no encontrada"));
 
         Producto producto = new Producto(
-                new ProductoId(),
-                nombre,
-                descripcion,
-                money,
-                categoria
+            UUID.ramdomUUID(),
+            request.getNombre(),
+            request.getDescripcion(),
+            request.getMoney(),
+            categoria
         );
 
         return productoRepository.save(producto);
     }
 
-    public Producto cambiarPrecio(UUID productoId, BigDecimal nuevoPrecio) {
-        Producto producto = productoRepository.findById(productoId)
-                .orElseThrow(() -> new DomainException("Producto no encontrado"));
+    public Producto actualizar(UUID id, ProductoRequest request) {
 
-        producto.cambiarPrecio(new Money(nuevoPrecio));
+        Producto producto = buscarPorId(id);
+
+        producto.actualizarNombre(request.getNombre());
+        producto.actualizarDescripcion(request.getDescripcion());
+
+        if (request.getPrecio() != null) {
+            producto.cambiarPrecio(request.getPrecio());
+        }
 
         return productoRepository.save(producto);
     }
 
-    public List<Producto> listarProductos() {
+    public List<Producto> buscarTodos() {
         return productoRepository.findAll();
     }
 
-    public Producto obtenerProducto(UUID id) {
+    public Producto buscarPorId(UUID id) {
         return productoRepository.findById(id)
-                .orElseThrow(() -> new DomainException("Producto no encontrado"));
+        .orElseThrow(() -> new DomainException("Producto no encontrado"));
+    }
+
+    public void activar(UUID id) {
+        Producto producto = buscarPorId(id);
+        producto.activar();
+        productoRepository.save(producto);
+    }
+
+    public void desactivar(UUID id) {
+        Producto producto = buscarPorId(id);
+        producto.desactivar();
+        productoRepository.save(producto);
+    }
+
+    // Para categoria
+
+    public Categoria crearCategoria(CategoriaRequest request) {
+
+        Categoria padre = null;
+
+        if (request.getCategoriaPdreId() != null) {
+        padre = Categoria categoria = categoriaRepository.findById(request.getCategoriaId())
+        .orElseThrow(() -> new RuntimeException("Categoria no encontrada"));
+        }
+
+        Categoria categoria = new Categoria(
+            UUID.ramdomUUID(),
+            request.getNombre(),
+            request.getDescripcion(),
+            padre
+        );
+
+        return categoriaRepository.save(categoria);
+    }
+
+    public Producto actualizarCategoria(UUID id, CategoriaRequest request) {
+
+        Categoria categoria = buscarCategoriaPorId(id);
+
+        categoria.actualizarNombre(request.getNombre());
+        categoria.actualizarDescripcion(request.getDescripcion());
+
+        if (request.getCategoriaPadreId() != null) {
+            Categoria padre = buscarCategoriaPorId(request.getCategoriaPadreId());
+            categoria.asignarPadre(padre);
+        }
+
+        return categoriaRepository.save(categoria);
+    }
+
+    public List<Producto> buscarTodasCategorias() {
+        return categoriaRepository.findAll();
+    }
+
+    public Producto buscarCategoriaPorId(UUID id) {
+        return categoriaRepository.findById(id)
+        .orElseThrow(() -> new DomainException("Categoria no encontrado"));
     }
 }
