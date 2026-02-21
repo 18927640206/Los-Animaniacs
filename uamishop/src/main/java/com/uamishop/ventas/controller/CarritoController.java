@@ -21,7 +21,7 @@ public class CarritoController { // Controlador REST para gestionar carritos de 
 
     // POST /api/carritos - Crea un nuevo carrito para un cliente
     @PostMapping
-    public ResponseEntity<Carrito> crear(@RequestBody CrearCarritoRequest request) { // Maneja la solicitud POST para crear un nuevo carrito, recibe los datos del cliente en el cuerpo de la solicitud y devuelve el carrito creado con su ubicación
+    public ResponseEntity<Carrito> crear(@Valid @RequestBody CrearCarritoRequest request) { // Maneja la solicitud POST para crear un nuevo carrito, recibe los datos del cliente en el cuerpo de la solicitud y devuelve el carrito creado con su ubicación
         Carrito carrito = carritoService.crearCarrito(UUID.fromString(request.getClienteId())); // Llama al servicio para crear un nuevo carrito utilizando el ID del cliente proporcionado en la solicitud
         return ResponseEntity.created(URI.create("/api/carritos/" + carrito.getId().toString())) // Devuelve una respuesta HTTP 201 Created con la ubicación del nuevo carrito y el carrito creado en el cuerpo de la respuesta
                 .body(carrito);// Devuelve el carrito creado en el cuerpo de la respuesta HTTP.
@@ -37,8 +37,7 @@ public class CarritoController { // Controlador REST para gestionar carritos de 
 
     // POST /api/carritos/{id}/items - Agrega un producto al carrito
     @PostMapping("/{id}/items")
-    public ResponseEntity<Carrito> agregarItem(@PathVariable String id, 
-                                               @RequestBody AgregarItemRequest req) {
+    public ResponseEntity<Carrito> agregarItem(@PathVariable UUID id, @Valid @RequestBody AgregarItemRequest req) {
         // Crea el objeto Money con el precio unitario en moneda MXN
         Money precio = new Money(req.getPrecioUnitario(), "MXN");
         

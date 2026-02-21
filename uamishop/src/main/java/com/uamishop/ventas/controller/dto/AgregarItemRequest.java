@@ -1,41 +1,46 @@
 package com.uamishop.ventas.controller.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
 import java.math.BigDecimal;
 
 public class AgregarItemRequest {
-    // Datos necesarios para agregar un producto al carrito
-    private String productoId; // ID único del producto elegido
-    private int cantidad; // Cantidad de unidades del producto
-    private BigDecimal precioUnitario; // Precio unitario del producto en el carrito
 
-    // Getters y Setters
-    
-    // Obtiene el ID del producto
+    /*LAS VALIDACIONES SE ACTIVAN EN EL CONTROLLER */
+
+    @NotBlank(message = "El productoId es obligatorio")
+    private String productoId;
+
+    @NotNull(message = "La cantidad es obligatoria")
+    @Positive(message = "La cantidad debe ser mayor a 0")
+    private Integer cantidad; //Se coloca en Integer porque si es int nunca puede ser null
+
+    @NotNull(message = "El precioUnitario es obligatorio")
+    @Positive(message = "El precioUnitario debe ser mayor a 0")
+    private BigDecimal precioUnitario;
+
     public String getProductoId() { 
         return productoId; 
     }
 
-    // Establece el ID del producto
     public void setProductoId(String productoId) { 
         this.productoId = productoId; 
     }
 
-    // Obtiene la cantidad de productos
-    public int getCantidad() { 
+    public Integer getCantidad() { 
         return cantidad; 
     }
 
-    // Establece la cantidad de productos
-    public void setCantidad(int cantidad) { 
+    public void setCantidad(Integer cantidad) { 
         this.cantidad = cantidad; 
     }
 
-    // Obtiene el precio unitario del producto
     public BigDecimal getPrecioUnitario() { 
         return precioUnitario; 
     }
 
-    // Establece el precio unitario del producto
     public void setPrecioUnitario(BigDecimal precioUnitario) { 
         this.precioUnitario = precioUnitario; 
     }

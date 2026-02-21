@@ -1,3 +1,5 @@
+import jakarta.validation.Valid;    
+
 @RestController
 @RequestMapping("/api/productos")
 @RequiredArgsConstructor
@@ -6,7 +8,7 @@ public class ProductoController {
     private final ProductoService productoService;
 
     @PostMapping
-    public ResponseEntity<ProductoResponse> crear(@RequestBody ProductoRequest request) {
+    public ResponseEntity<ProductoResponse> crear( @Valid @RequestBody ProductoRequest request) {
         ProductoResponse response = productoService.crear(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -24,7 +26,7 @@ public class ProductoController {
     @PutMapping("/{id}")
     public ResponseEntity<ProductoResponse> actualizar(
             @PathVariable UUID id,
-            @RequestBody ProductoRequest request) {
+            @Valid @RequestBody ProductoRequest request) {
 
         return ResponseEntity.ok(productoService.actualizar(id, request));
     }
