@@ -1,20 +1,19 @@
 package com.uamishop.ordenes.controller.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
-public class DireccionEnvioRequest {
+public class OrdenResponse {
 
-    @NotBlank(message = "La calle es obligatoria")
-    private String calle;
-
-    @NotBlank(message = "La ciudad es obligatoria")
-    private String ciudad;
-
-    @NotBlank(message = "El codigo postal es obligatorio")
-    private String codigoPostal;
-
-    @NotBlank(message = "El pais es obligatorio")
-    private String pais;
+    private UUID id;
+    private String clienteId;
+    private String estado;
+    private BigDecimal total;
+    private LocalDateTime fechaCreacion;
+    private DireccionEnvio direccionEnvio;
+    private List<ItemOrdenResponse> items;
 
     // getters y setters
 }

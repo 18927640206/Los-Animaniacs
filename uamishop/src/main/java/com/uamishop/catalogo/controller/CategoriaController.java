@@ -16,7 +16,7 @@ public class CategoriaController {
     }
 
     @PostMapping
-    public ResponseEntity<CategoriaResponse> crear(@RequestBody CategoriaRequest request) {
+    public ResponseEntity<CategoriaResponse> crear(@Valid @RequestBody CategoriaRequest request) {
         CategoriaResponse response = categoriaService.crear(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -24,7 +24,7 @@ public class CategoriaController {
     @PutMapping("/{id}")
     public ResponseEntity<CategoriaResponse> actualizar(
             @PathVariable UUID id,
-            @RequestBody CategoriaRequest request) {
+            @Valid @RequestBody CategoriaRequest request) {
 
         return ResponseEntity.ok(categoriaService.actualizar(id, request));
     }
