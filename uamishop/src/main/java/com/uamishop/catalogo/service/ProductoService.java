@@ -25,7 +25,7 @@ public class ProductoService {
         .orElseThrow(() -> new RuntimeException("Categoria no encontrada"));
 
         Producto producto = new Producto(
-            UUID.ramdomUUID(),
+            UUID.randomUUID(),
             request.getNombre(),
             request.getDescripcion(),
             request.getMoney(),
@@ -71,8 +71,25 @@ public class ProductoService {
     }
 
     // Para categoria
-
     public Categoria crearCategoria(CategoriaRequest request) {
+
+    Categoria categoria = new Categoria(
+            new CategoriaId(UUID.randomUUID().toString()),
+            request.getNombre()
+    );
+
+    if (request.getCategoriaPadreId() != null) {
+
+        Categoria padre = categoriaRepository.findById(
+                request.getCategoriaPadreId())
+            .orElseThrow(() -> new RuntimeException("Categoria padre no encontrada"));
+
+        categoria.asignarCategoriaPadre(padre);
+    }
+
+    return categoriaRepository.save(categoria);
+}
+    /*public Categoria crearCategoria(CategoriaRequest request) {
 
         Categoria padre = null;
 
@@ -90,6 +107,7 @@ public class ProductoService {
 
         return categoriaRepository.save(categoria);
     }
+    ESTE METODO SE ACTUALIZO*/
 
     public Producto actualizarCategoria(UUID id, CategoriaRequest request) {
 
