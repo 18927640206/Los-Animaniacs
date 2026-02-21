@@ -16,7 +16,7 @@ public class OrdenController {
     }
 
     @PostMapping
-    public ResponseEntity<OrdenResponse> crear(@RequestBody OrdenRequest request) {
+    public ResponseEntity<OrdenResponse> crear(@Valid @RequestBody OrdenRequest request) {
         OrdenResponse response = ordenService.crear(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -24,7 +24,7 @@ public class OrdenController {
     @PutMapping("/{id}/estado")
     public ResponseEntity<OrdenResponse> actualizarEstado(
             @PathVariable UUID id,
-            @RequestBody EstadoRequest request) {
+            @Valid @RequestBody EstadoRequest request) {
 
         return ResponseEntity.ok(ordenService.actualizarEstado(id, request));
     }
