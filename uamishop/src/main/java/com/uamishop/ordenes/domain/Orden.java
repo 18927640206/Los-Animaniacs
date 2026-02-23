@@ -1,6 +1,6 @@
 package com.uamishop.ordenes.domain;
 import com.uamishop.shared.domain.Money;
-import com.uamishop.ventas.domain.ClienteId;
+import com.uamishop.shared.domain.ClienteId;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;

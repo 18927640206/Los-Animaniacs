@@ -1,0 +1,2051 @@
+===== MAPA DEL PROYECTO =====
+src
+├── main
+│   ├── java
+│   │   └── com
+│   │       └── uamishop
+│   │           ├── OpenApiConfig.java
+│   │           ├── UamishopApplication.java
+│   │           ├── catalogo
+│   │           │   ├── controller
+│   │           │   │   ├── CategoriaController.java
+│   │           │   │   ├── ProductoController.java
+│   │           │   │   └── dto
+│   │           │   │       ├── CategoriaRequest.java
+│   │           │   │       ├── CategoriaResponse.java
+│   │           │   │       ├── ProductoRequest.java
+│   │           │   │       └── ProductoResponse.java
+│   │           │   ├── domain
+│   │           │   │   ├── Categoria.java
+│   │           │   │   ├── CategoriaId.java
+│   │           │   │   ├── Imagen.java
+│   │           │   │   ├── Producto.java
+│   │           │   │   ├── ProductoId.java
+│   │           │   │   └── exception
+│   │           │   │       └── ProductoException.java
+│   │           │   ├── repository
+│   │           │   │   ├── CategoriaJpaRepository.java
+│   │           │   │   └── ProductoJpaRepository.java
+│   │           │   └── service
+│   │           │       └── ProductoService.java
+│   │           ├── ordenes
+│   │           │   ├── controller
+│   │           │   │   ├── OrdenController.java
+│   │           │   │   └── dto
+│   │           │   │       ├── CrearOrdenRequest.java
+│   │           │   │       ├── DireccionEnvioRequest.java
+│   │           │   │       ├── DireccionEnvioResponse.java
+│   │           │   │       ├── ItemOrdenRequest.java
+│   │           │   │       ├── ItemOrdenResponse.java
+│   │           │   │       └── OrdenResponse.java
+│   │           │   ├── domain
+│   │           │   │   ├── CambioEstado.java
+│   │           │   │   ├── DireccionEnvio.java
+│   │           │   │   ├── EstadoOrden.java
+│   │           │   │   ├── EstadoPago.java
+│   │           │   │   ├── InfoPago.java
+│   │           │   │   ├── ItemOrden.java
+│   │           │   │   ├── ItemOrdenId.java
+│   │           │   │   ├── Orden.java
+│   │           │   │   ├── OrdenId.java
+│   │           │   │   └── exception
+│   │           │   │       └── OrdenException.java
+│   │           │   ├── repository
+│   │           │   │   └── OrdenJpaRepository.java
+│   │           │   └── service
+│   │           │       └── OrdenService.java
+│   │           ├── shared
+│   │           │   ├── domain
+│   │           │   │   ├── ClienteId.java
+│   │           │   │   └── Money.java
+│   │           │   └── exception
+│   │           │       └── DomainException.java
+│   │           └── ventas
+│   │               ├── controller
+│   │               │   ├── CarritoController.java
+│   │               │   └── dto
+│   │               │       ├── AgregarItemRequest.java
+│   │               │       ├── AgregarItemResponse.java
+│   │               │       ├── CarritoResponse.java
+│   │               │       └── CrearCarritoRequest.java
+│   │               ├── domain
+│   │               │   ├── Carrito.java
+│   │               │   ├── CarritoId.java
+│   │               │   ├── ClienteId.java
+│   │               │   ├── DescuentoAplicado.java
+│   │               │   ├── EstadoCarrito.java
+│   │               │   ├── ItemCarrito.java
+│   │               │   ├── ItemCarritoId.java
+│   │               │   ├── ProductoRef.java
+│   │               │   └── exception
+│   │               │       └── CrritoException.java
+│   │               ├── repository
+│   │               │   └── CarritoJpaRepository.java
+│   │               └── service
+│   │                   └── CarritoService.java
+│   └── resources
+│       └── application.properties
+└── test
+    ├── java
+    │   └── com
+    │       └── uamishop
+    │           ├── catalogo
+    │           │   └── domain
+    │           │       └── ProductoTest.java
+    │           ├── ordenes
+    │           │   └── domain
+    │           │       └── OrdenTest.java
+    │           ├── shared
+    │           │   └── domain
+    │           │       └── MoneyTest.java
+    │           └── ventas
+    │               └── domain
+    │                   └── CarritoTest.java
+    └── resources
+
+43 directories, 60 files
+
+===== CODIGO =====
+
+===== src/test/java/com/uamishop/catalogo/domain/ProductoTest.java =====
+package com.uamishop.catalogo.domain;
+
+import com.uamishop.shared.domain.Money;
+import org.junit.jupiter.api.Test;
+import java.math.BigDecimal;
+import static org.junit.jupiter.api.Assertions.*;
+
+class ProductoTest {
+    
+    @Test
+    void testCrearProducto() {
+        ProductoId id = new ProductoId("P1");
+        Money precio = new Money(new BigDecimal("100"), "MXN");
+        CategoriaId catId = new CategoriaId("CAT1");
+        
+        Producto p = new Producto(id, "Laptop", "Desc", precio, catId);
+        
+        assertEquals("Laptop", p.getNombre());
+        assertEquals(0, p.getImagenes().size());
+    }
+    
+    @Test
+    void testCambiarPrecio() {
+        ProductoId id = new ProductoId("P1");
+        Money precio = new Money(new BigDecimal("100"), "MXN");
+        CategoriaId catId = new CategoriaId("CAT1");
+        Producto p = new Producto(id, "Laptop", "Desc", precio, catId);
+        
+        Money nuevoPrecio = new Money(new BigDecimal("150"), "MXN");
+        p.cambiarPrecio(nuevoPrecio);
+        
+        assertEquals(nuevoPrecio.getMonto(), p.getPrecio().getMonto());
+    }
+}
+===== src/test/java/com/uamishop/ordenes/domain/OrdenTest.java =====
+package com.uamishop.ordenes.domain;
+
+import com.uamishop.shared.domain.Money;
+import com.uamishop.ventas.domain.ClienteId;
+import com.uamishop.ventas.domain.ProductoRef;
+import com.uamishop.catalogo.domain.ProductoId;
+import org.junit.jupiter.api.Test;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import static org.junit.jupiter.api.Assertions.*;
+
+class OrdenTest {
+    
+    @Test
+    void testCrearOrden() {
+        OrdenId ordenId = new OrdenId("ORD1");
+        ClienteId clienteId = new ClienteId("CLI1");
+        
+        ItemOrden item = new ItemOrden(
+            new ItemOrdenId("I1"),
+            new ProductoRef(new ProductoId("P1"), "Laptop", "LAP-001"),
+            2,
+            new Money(new BigDecimal("100"), "MXN")
+        );
+        
+        DireccionEnvio direccion = new DireccionEnvio(
+            "Calle", "Colonia", "Ciudad", "Estado", "12345", "México", "5551234567"
+        );
+        
+        Orden orden = new Orden(ordenId, clienteId, Arrays.asList(item), direccion);
+        
+        assertEquals(EstadoOrden.PENDIENTE, orden.getEstado());
+        assertEquals(1, orden.getItems().size());
+    }
+    
+    @Test
+    void testConfirmarOrden() {
+        OrdenId ordenId = new OrdenId("ORD1");
+        ClienteId clienteId = new ClienteId("CLI1");
+        
+        ItemOrden item = new ItemOrden(
+            new ItemOrdenId("I1"),
+            new ProductoRef(new ProductoId("P1"), "Laptop", "LAP-001"),
+            1,
+            new Money(new BigDecimal("100"), "MXN")
+        );
+        
+        DireccionEnvio direccion = new DireccionEnvio(
+            "Calle", "Colonia", "Ciudad", "Estado", "12345", "México", "5551234567"
+        );
+        
+        Orden orden = new Orden(ordenId, clienteId, Arrays.asList(item), direccion);
+        orden.confirmar();
+        
+        assertEquals(EstadoOrden.CONFIRMADA, orden.getEstado());
+    }
+}
+
+===== src/test/java/com/uamishop/ventas/domain/CarritoTest.java =====
+package com.uamishop.ventas.domain;
+
+import com.uamishop.catalogo.domain.ProductoId;
+import com.uamishop.shared.domain.Money;
+import org.junit.jupiter.api.Test;
+import java.math.BigDecimal;
+import static org.junit.jupiter.api.Assertions.*;
+
+class CarritoTest {
+    
+    @Test
+    void testAgregarProducto() {
+        CarritoId cartId = new CarritoId("C1");
+        ClienteId clientId = new ClienteId("CLI1");
+        Carrito carrito = new Carrito(cartId, clientId);
+        
+        ProductoRef producto = new ProductoRef(
+            new ProductoId("P1"), "Laptop", "LAP-001"
+        );
+        Money precio = new Money(new BigDecimal("100"), "MXN");
+        
+        carrito.agregarProducto(producto, 2, precio);
+        
+        assertEquals(1, carrito.getItems().size());
+        assertEquals(EstadoCarrito.ACTIVO, carrito.getEstado());
+    }
+    
+    @Test
+    void testIniciarCheckout() {
+        CarritoId cartId = new CarritoId("C1");
+        ClienteId clientId = new ClienteId("CLI1");
+        Carrito carrito = new Carrito(cartId, clientId);
+        
+        ProductoRef producto = new ProductoRef(
+            new ProductoId("P1"), "Laptop", "LAP-001"
+        );
+        Money precio = new Money(new BigDecimal("100"), "MXN");
+        
+        carrito.agregarProducto(producto, 1, precio);
+        carrito.iniciarCheckout();
+        
+        assertEquals(EstadoCarrito.EN_CHECKOUT, carrito.getEstado());
+    }
+}
+===== src/test/java/com/uamishop/shared/domain/MoneyTest.java =====
+package com.uamishop.shared.domain;
+
+import org.junit.jupiter.api.Test;
+import java.math.BigDecimal;
+import static org.junit.jupiter.api.Assertions.*;
+
+class MoneyTest {
+    
+    @Test
+    void testSumar() {
+        Money m1 = new Money(new BigDecimal("100"), "MXN");
+        Money m2 = new Money(new BigDecimal("50"), "MXN");
+        
+        Money resultado = m1.sumar(m2);
+        
+        assertEquals(new BigDecimal("150"), resultado.getMonto());
+    }
+    
+    @Test
+    void testSumarMonedasDiferentes() {
+        Money m1 = new Money(new BigDecimal("100"), "MXN");
+        Money m2 = new Money(new BigDecimal("50"), "USD");
+        
+        assertThrows(IllegalArgumentException.class, () -> {
+            m1.sumar(m2);
+        });
+    }
+}
+===== src/main/java/com/uamishop/UamishopApplication.java =====
+package com.uamishop;
+
+/*ES IMPORTANTE YA QUE PARA PODER HACER LO DE LA P4 REQUERIAMOS DE SPRINGBOOT. 
+YA CONE ESTO SE PUEDE USAR @Valid, @RestController,@ControllerAdvice*/
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class UamishopApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(UamishopApplication.class, args);
+    }
+}
+===== src/main/java/com/uamishop/catalogo/controller/dto/CategoriaResponse.java =====
+package com.uamishop.catalogo.controller.dto;
+
+import java.util.UUID;
+
+public class CategoriaResponse {
+
+    private UUID id;
+    private String nombre;
+    private String descripcion;
+
+    // getters y setters
+}
+===== src/main/java/com/uamishop/catalogo/controller/dto/CategoriaRequest.java =====
+package com.uamishop.catalogo.controller.dto;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public class CategoriaRequest {
+
+    @NotBlank(message = "El nombre es obligatorio")
+    @Size(max = 100, message = "El nombre no puede exceder 100 caracteres")
+    private String nombre;
+
+    @Size(max = 200, message = "La descripcion no puede exceder de 200 caracteres")
+    private String descripcion;
+
+    // getters y setters
+}
+===== src/main/java/com/uamishop/catalogo/controller/dto/ProductoResponse.java =====
+package com.uamishop.catalogo.controller.dto;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+
+import java.math.BigDecimal;
+import java.util.UUID;
+
+public class ProductoResponse {
+
+    private UUID id;
+    private String nombre;
+    private String descripcion;
+    private BigDecimal precio;
+    private UUID categoriaId;
+    private String estado;
+
+    public ProductoResponse(
+        UUID id, 
+        String nombre,
+        String descripcion, 
+        BigDecimal precio, 
+        UUID categoriaId, 
+        String estado
+    ) {
+        this.id = id;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.precio = precio;
+        this.categoriaId = categoriaId;
+        this.estado = estado;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public BigDecimal getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(BigDecimal precio) {
+        this.precio = precio;
+    }
+
+    public UUID getCategoriaId() {
+        return categoriaId;
+    }
+
+    public void setCategoriaId(UUID categoriaId) {
+        this.categoriaId = categoriaId;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+}
+===== src/main/java/com/uamishop/catalogo/controller/dto/ProductoRequest.java =====
+package com.uamishop.catalogo.controller.dto;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+import io.swagger.v3.oas.annotations.media.Schema;
+import java.math.BigDecimal;
+
+@Schema(description = "Datos de entrada para crear o actualizar un producto")
+public class ProductoRequest {
+
+    @Schema(description = "Nombre del producto", example = "Camiseta negra", requiredMode = Schema.RequiredMode.REQUIRED, maxLength = 100)
+    @NotBlank(message = "El nombre es obligatorio")
+    @Size(max = 100, message = "El nombre no puede exceder 100 caracteres")
+    private String nombre;
+
+    @Schema(description = "Descripción detallada del producto", example = "Camiseta 100% algodón, talla M", maxLength = 300)
+    @NotBlank(message = "La descripción es obligatoria")
+    @Size(max = 300, message = "La descripción no puede exceder 300 caracteres")
+    private String descripcion;
+
+    @Schema(description = "Precio del producto (mayor a 0)", example = "29.99", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotNull(message = "El precio es obligatorio")
+    @Positive(message = "El precio debe ser mayor a 0")
+    private BigDecimal precio;
+
+    @Schema(description = "Identificador de la categoría a la que pertenece el producto", example = "cat-123", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotBlank(message = "La categoriaId es obligatoria")
+    private String categoriaId;
+
+    // Getters y setters
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public BigDecimal getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(BigDecimal precio) {
+        this.precio = precio;
+    }
+
+    public String getCategoriaId() {
+        return categoriaId;
+    }
+
+    public void setCategoriaId(String categoriaId) {
+        this.categoriaId = categoriaId;
+    }
+}
+
+===== src/main/java/com/uamishop/catalogo/controller/ProductoController.java =====
+package com.uamishop.catalogo.controller;
+
+import jakarta.validation.Valid;    
+import com.uamishop.catalogo.controller.dto.ProductoRequest;
+import com.uamishop.catalogo.controller.dto.ProductoResponse;
+import com.uamishop.catalogo.service.ProductoService;
+import com.uamishop.shared.api.ApiError;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/productos")
+@RequiredArgsConstructor
+@Tag(name = "Productos", description = "Endpoints para gestión de productos en el catálogo")
+public class ProductoController {
+
+    private final ProductoService productoService;
+    public ProductoController(ProductoService productoService) {
+        this.productoService = productoService;
+    }
+
+    @PostMapping
+    @Operation(
+        summary = "Crear un nuevo producto",
+        description = "Registra un producto en el catálogo con los datos proporcionados"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "201",
+            description = "Producto creado exitosamente",
+            headers = @Header(
+                name = "Location",
+                description = "URI del recurso creado (/api/productos/{id})",
+                schema = @Schema(type = "string", format = "uri")
+            ),
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ProductoResponse.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Datos inválidos (error de validación o producto duplicado)",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiError.class)
+            )
+        ),
+        @ApiResponse(responseCode = "401", description = "No autenticado"),
+        @ApiResponse(responseCode = "403", description = "No autorizado")
+    })
+    public ResponseEntity<ProductoResponse> crear(@Valid @RequestBody ProductoRequest request) {
+        ProductoResponse response = productoService.crear(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("/{id}")
+    @Operation(
+        summary = "Obtener producto por ID",
+        description = "Detalles de un producto específico según su identificador único (UUID)."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Producto encontrado",
+            content = @Content(schema = @Schema(implementation = ProductoResponse.class))
+        ),
+        @ApiResponse(responseCode = "400", description = "ID inválido (no es UUID)"),
+        @ApiResponse(responseCode = "404", description = "Producto no encontrado")
+    })
+    public ResponseEntity<ProductoResponse> obtenerProducto(
+        @Parameter(description = "Identificador único del producto (UUID)", example = "123e4567-e89b-12d3-a456-426614174000")
+        @PathVariable UUID id) {
+        return ResponseEntity.ok(productoService.buscarPorId(id));
+    }
+
+    @GetMapping
+    @Operation(
+        summary = "Listar todos los productos",
+        description = "Retorna una lista de todos los productos registrados en el catálogo."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Lista obtenida exitosamente",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ProductoResponse.class, type = "array")
+            )
+        )
+    })
+    public ResponseEntity<List<ProductoResponse>> listar() {
+        return ResponseEntity.ok(productoService.listarTodos());
+    }
+
+    @PutMapping("/{id}")
+    @Operation(
+        summary = "Actualizar un producto existente",
+        description = "Actualiza los datos de un producto existente identificado por su ID."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Producto actualizado correctamente",
+            content = @Content(schema = @Schema(implementation = ProductoResponse.class))
+        ),
+        @ApiResponse(responseCode = "400", description = "Datos inválidos"),
+        @ApiResponse(responseCode = "404", description = "Producto no encontrado")
+    })
+    public ResponseEntity<ProductoResponse> actualizar(
+            @Parameter(description = "Identificador único del producto (UUID)", example = "123e4567-e89b-12d3-a456-426614174000")
+            @PathVariable UUID id,
+            @Valid @RequestBody ProductoRequest request) {
+        return ResponseEntity.ok(productoService.actualizar(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(
+        summary = "Eliminar un producto",
+        description = "Elimina un producto del catálogo según su ID."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "Producto eliminado (sin contenido)"),
+        @ApiResponse(responseCode = "400", description = "ID inválido"),
+        @ApiResponse(responseCode = "404", description = "Producto no encontrado")
+    })
+    public ResponseEntity<Void> eliminar(
+        @Parameter(description = "Identificador único del producto (UUID)", example = "123e4567-e89b-12d3-a456-426614174000")
+        @PathVariable UUID id) {
+        productoService.eliminar(id);
+        return ResponseEntity.noContent().build();
+    }
+}
+
+===== src/main/java/com/uamishop/catalogo/controller/CategoriaController.java =====
+@RestController
+@RequestMapping("/api/categorias")
+@RequiredArgsConstructor
+public class CategoriaController {
+
+    private final CategoriaService categoriaService;
+
+    @GetMapping
+    public ResponseEntity<List<CategoriaResponse>> listar() {
+        return ResponseEntity.ok(categoriaService.obtenerTodas());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CategoriaResponse> obtener(@PathVariable UUID id) {
+        return ResponseEntity.ok(categoriaService.buscarPorId(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<CategoriaResponse> crear(@Valid @RequestBody CategoriaRequest request) {
+        CategoriaResponse response = categoriaService.crear(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CategoriaResponse> actualizar(
+            @PathVariable UUID id,
+            @Valid @RequestBody CategoriaRequest request) {
+
+        return ResponseEntity.ok(categoriaService.actualizar(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable UUID id) {
+        categoriaService.eliminar(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/productos")
+    public ResponseEntity<List<ProductoResponse>> listarProductos(@PathVariable UUID id) {
+        return ResponseEntity.ok(categoriaService.obtenerProductos(id));
+    }
+}
+
+===== src/main/java/com/uamishop/catalogo/repository/CategoriaJpaRepository.java =====
+package com.uamishop.catalogo.repository;
+import com.uamishop.catalogo.domain.Categoria;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.UUID;
+
+public interface CategoriaJpaRepository extends JpaRepository<Categoria, UUID> {
+    
+}
+===== src/main/java/com/uamishop/catalogo/repository/ProductoJpaRepository.java =====
+package com.uamishop.catalogo.repository;
+
+import com.uamishop.catalogo.domain.Producto;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.UUID;
+
+public interface ProductoJpaRepository extends JpaRepository<Producto, UUID> {
+    //Aqui meteremos lo metodos nuevos si se llegan a requerir.
+    //solo declarados pues esta es una interface.
+}
+===== src/main/java/com/uamishop/catalogo/domain/exception/ProductoException.java =====
+
+===== src/main/java/com/uamishop/catalogo/domain/Categoria.java =====
+package com.uamishop.catalogo.domain;
+
+public class Categoria {
+    private final CategoriaId id;
+    private String nombre;
+    private Categoria categoriaPadre;
+
+    public Categoria(CategoriaId id, String nombre) {
+        this.id = id;
+        this.nombre = nombre;
+    }
+
+    public void asignarCategoriaPadre(Categoria padre) {
+        this.categoriaPadre = padre;
+    }
+}
+
+===== src/main/java/com/uamishop/catalogo/domain/Imagen.java =====
+package com.uamishop.catalogo.domain;
+
+public class Imagen {
+	private final String url;
+    private final String textoAlternativo;
+    private final int orden;
+    
+    public Imagen(String url, String textoAlternativo, int orden) {
+        if (url == null || (!url.startsWith("http://") && !url.startsWith("https://"))) {
+            throw new IllegalArgumentException("URL inválida");
+        }
+        this.url = url;
+        this.textoAlternativo = textoAlternativo;
+        this.orden = orden;
+    }
+    
+    public String getUrl() { return url; }
+}
+
+
+
+
+===== src/main/java/com/uamishop/catalogo/domain/CategoriaId.java =====
+package com.uamishop.catalogo.domain;
+
+public class CategoriaId {
+	 private final String id;
+	    public CategoriaId(String id) { this.id = id; }
+	    public String getId() { return id; }
+}
+
+===== src/main/java/com/uamishop/catalogo/domain/ProductoId.java =====
+package com.uamishop.catalogo.domain;
+
+public class ProductoId {
+	private final String id;
+    public ProductoId(String id) { this.id = id; }
+    public String getId() { return id; }
+}
+
+
+===== src/main/java/com/uamishop/catalogo/domain/Producto.java =====
+package com.uamishop.catalogo.domain;
+import com.uamishop.shared.domain.Money;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Producto {
+	    private final ProductoId id;
+	    private String nombre;
+	    private String descripcion;
+	    private Money precio;
+	    private final CategoriaId categoriaId;
+	    private boolean disponible;
+	    private final List<Imagen> imagenes;
+
+	    public Producto(ProductoId id, String nombre, String descripcion, 
+	                   Money precio, CategoriaId categoriaId) {
+	        // RN-CAT-01
+	        if (nombre.length() < 3 || nombre.length() > 100) {
+	            throw new IllegalArgumentException("Nombre inválido");
+	        }
+	        
+	        // RN-CAT-02
+	        if (precio.getMonto().compareTo(BigDecimal.ZERO) <= 0) {
+	            throw new IllegalArgumentException("Precio debe ser > 0");
+	        }
+	        
+	        this.id = id;
+	        this.nombre = nombre;
+	        this.descripcion = descripcion;
+	        this.precio = precio;
+	        this.categoriaId = categoriaId;
+	        this.disponible = false;
+	        this.imagenes = new ArrayList<>();
+	    }
+
+	    public void cambiarPrecio(Money nuevoPrecio) {
+	        // RN-CAT-04
+	        if (nuevoPrecio.getMonto().compareTo(BigDecimal.ZERO) < 0) {
+	            throw new IllegalArgumentException("Precio no puede ser negativo");
+	        }
+	        
+	        // RN-CAT-05
+	        BigDecimal maximo = precio.getMonto().multiply(new BigDecimal("1.5"));
+	        if (nuevoPrecio.getMonto().compareTo(maximo) > 0) {
+	            throw new IllegalArgumentException("No puede aumentar más del 50%");
+	        }
+	        
+	        this.precio = nuevoPrecio;
+	    }
+
+	    public void agregarImagen(Imagen imagen) {
+	        // RN-CAT-06
+	        if (imagenes.size() >= 5) {
+	            throw new IllegalStateException("Máximo 5 imágenes");
+	        }
+	        imagenes.add(imagen);
+	    }
+
+	    public void desactivar() {
+	        // RN-CAT-08
+	        if (!disponible) {
+	            throw new IllegalStateException("Ya está desactivado");
+	        }
+	        disponible = false;
+	    }
+
+	    public void activar() {
+	        // RN-CAT-09
+	        if (imagenes.isEmpty()) {
+	            throw new IllegalStateException("Necesita al menos una imagen");
+	        }
+	        
+	        // RN-CAT-10
+	        if (precio.getMonto().compareTo(BigDecimal.ZERO) <= 0) {
+	            throw new IllegalStateException("Precio debe ser > 0");
+	        }
+	        
+	        disponible = true;
+	    }
+	    
+	    // Getters
+	    public ProductoId getId() { return id; }
+	    public String getNombre() { return nombre; }
+	    public Money getPrecio() { return precio; }
+	    public boolean isDisponible() { return disponible; }
+	    public List<Imagen> getImagenes() { return new ArrayList<>(imagenes); }
+}
+===== src/main/java/com/uamishop/catalogo/service/ProductoService.java =====
+package com.uamishop.catalogo.service;
+
+import com.uamishop.catalogo.domain.*;
+import com.uamishop.catalogo.repository.ProductoJpaRepository;
+import com.uamishop.shared.exception.DomainException;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.UUID;
+
+@Service
+public class ProductoService {
+
+    private final ProductoJpaRepository productoRepository;
+    private final CategoriaJpaRepository categoriaRepository;
+
+    public ProductoService(ProductoJpaRepository productoRepository, CategoriaJpaRepository categoriaRepository) {
+        this.productoRepository = productoRepository;
+        this.categoriaRepository = categoriaRepository;
+    }
+
+    public Producto crearProducto(ProductoRequest request) {
+        Categoria categoria = categoriaRepository.findById(request.getCategoriaId())
+        .orElseThrow(() -> new RuntimeException("Categoria no encontrada"));
+
+        Producto producto = new Producto(
+            UUID.randomUUID(),
+            request.getNombre(),
+            request.getDescripcion(),
+            request.getMoney(),
+            categoria
+        );
+
+        return productoRepository.save(producto);
+    }
+
+    public Producto actualizar(UUID id, ProductoRequest request) {
+
+        Producto producto = buscarPorId(id);
+
+        producto.actualizarNombre(request.getNombre());
+        producto.actualizarDescripcion(request.getDescripcion());
+
+        if (request.getPrecio() != null) {
+            producto.cambiarPrecio(request.getPrecio());
+        }
+
+        return productoRepository.save(producto);
+    }
+
+    public List<Producto> buscarTodos() {
+        return productoRepository.findAll();
+    }
+
+    public Producto buscarPorId(UUID id) {
+        return productoRepository.findById(id)
+        .orElseThrow(() -> new DomainException("Producto no encontrado"));
+    }
+
+    public void activar(UUID id) {
+        Producto producto = buscarPorId(id);
+        producto.activar();
+        productoRepository.save(producto);
+    }
+
+    public void desactivar(UUID id) {
+        Producto producto = buscarPorId(id);
+        producto.desactivar();
+        productoRepository.save(producto);
+    }
+
+    // Para categoria
+    public Categoria crearCategoria(CategoriaRequest request) {
+
+    Categoria categoria = new Categoria(
+            new CategoriaId(UUID.randomUUID().toString()),
+            request.getNombre()
+    );
+
+    if (request.getCategoriaPadreId() != null) {
+
+        Categoria padre = categoriaRepository.findById(
+                request.getCategoriaPadreId())
+            .orElseThrow(() -> new RuntimeException("Categoria padre no encontrada"));
+
+        categoria.asignarCategoriaPadre(padre);
+    }
+
+    return categoriaRepository.save(categoria);
+}
+    /*public Categoria crearCategoria(CategoriaRequest request) {
+
+        Categoria padre = null;
+
+        if (request.getCategoriaPdreId() != null) {
+        padre = Categoria categoria = categoriaRepository.findById(request.getCategoriaId())
+        .orElseThrow(() -> new RuntimeException("Categoria no encontrada"));
+        }
+
+        Categoria categoria = new Categoria(
+            UUID.ramdomUUID(),
+            request.getNombre(),
+            request.getDescripcion(),
+            padre
+        );
+
+        return categoriaRepository.save(categoria);
+    }
+    ESTE METODO SE ACTUALIZO*/
+
+    public Producto actualizarCategoria(UUID id, CategoriaRequest request) {
+
+        Categoria categoria = buscarCategoriaPorId(id);
+
+        categoria.actualizarNombre(request.getNombre());
+        categoria.actualizarDescripcion(request.getDescripcion());
+
+        if (request.getCategoriaPadreId() != null) {
+            Categoria padre = buscarCategoriaPorId(request.getCategoriaPadreId());
+            categoria.asignarPadre(padre);
+        }
+
+        return categoriaRepository.save(categoria);
+    }
+
+    public List<Producto> buscarTodasCategorias() {
+        return categoriaRepository.findAll();
+    }
+
+    public Producto buscarCategoriaPorId(UUID id) {
+        return categoriaRepository.findById(id)
+        .orElseThrow(() -> new DomainException("Categoria no encontrado"));
+    }
+}
+===== src/main/java/com/uamishop/ordenes/controller/dto/CrearOrdenRequest.java =====
+package com.uamishop.ordenes.controller.dto;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import java.util.List;
+
+public class CrearOrdenRequest {
+
+    @NotBlank(message = "El clienteId es obligatorio")
+    private String clienteId;
+
+    @Valid
+    @NotEmpty(message = "La orden debe tener al menos un item")
+    private List<ItemOrdenRequest> items;
+
+    @Valid
+    private DireccionEnvioRequest direccionEnvio;
+
+    // getters y setters
+}
+===== src/main/java/com/uamishop/ordenes/controller/dto/DireccionEnvioRequest.java =====
+package com.uamishop.ordenes.controller.dto;
+
+import jakarta.validation.constraints.NotBlank;
+
+public class DireccionEnvioRequest {
+
+    @NotBlank(message = "La calle es obligatoria")
+    private String calle;
+
+    @NotBlank(message = "La ciudad es obligatoria")
+    private String ciudad;
+
+    @NotBlank(message = "El codigo postal es obligatorio")
+    private String codigoPostal;
+
+    @NotBlank(message = "El pais es obligatorio")
+    private String pais;
+
+    // getters y setters
+}
+===== src/main/java/com/uamishop/ordenes/controller/dto/ItemOrdenRequest.java =====
+package com.uamishop.ordenes.controller.dto;
+
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import java.math.BigDecimal;
+
+public class ItemOrdenRequest {
+
+    @NotBlank(message = "El productoId es obligatorio")
+    private String productoId;
+
+    @Min(value = 1, message = "La cantidad debe ser mayor a 0")
+    private int cantidad;
+
+    @NotNull(message = "El precio unitario es obligatorio")
+    private BigDecimal precioUnitario;
+
+    // getters y setters
+}
+===== src/main/java/com/uamishop/ordenes/controller/dto/DireccionEnvioResponse.java =====
+package com.uamishop.ordenes.controller.dto;
+
+public class DireccionEnvioResponse {
+
+    private String calle;
+    private String ciudad;
+    private String codigoPostal;
+    private String pais;
+
+    // getters y setters
+}
+===== src/main/java/com/uamishop/ordenes/controller/dto/ItemOrdenResponse.java =====
+package com.uamishop.ordenes.controller.dto;
+
+import java.math.BigDecimal;
+
+public class ItemOrdenResponse {
+
+    private String productoId;
+    private int cantidad;
+    private BigDecimal precioUnitario;
+    private BigDecimal subtotal;
+
+    // getters y setters
+}
+===== src/main/java/com/uamishop/ordenes/controller/dto/OrdenResponse.java =====
+package com.uamishop.ordenes.controller.dto;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+public class OrdenResponse {
+
+    private UUID id;
+    private String clienteId;
+    private String estado;
+    private BigDecimal total;
+    private LocalDateTime fechaCreacion;
+    private DireccionEnvio direccionEnvio;
+    private List<ItemOrdenResponse> items;
+
+    // getters y setters
+}
+===== src/main/java/com/uamishop/ordenes/controller/OrdenController.java =====
+@RestController
+@RequestMapping("/api/ordenes")
+@RequiredArgsConstructor
+public class OrdenController {
+
+    private final OrdenService ordenService;
+
+    @GetMapping
+    public ResponseEntity<List<OrdenResponse>> listar() {
+        return ResponseEntity.ok(ordenService.listarPorUsuario());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<OrdenResponse> obtener(@PathVariable UUID id) {
+        return ResponseEntity.ok(ordenService.buscarPorId(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<OrdenResponse> crear(@Valid @RequestBody OrdenRequest request) {
+        OrdenResponse response = ordenService.crear(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PutMapping("/{id}/estado")
+    public ResponseEntity<OrdenResponse> actualizarEstado(
+            @PathVariable UUID id,
+            @Valid @RequestBody EstadoRequest request) {
+
+        return ResponseEntity.ok(ordenService.actualizarEstado(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> cancelar(@PathVariable UUID id) {
+        ordenService.cancelar(id);
+        return ResponseEntity.noContent().build();
+    }
+}
+
+===== src/main/java/com/uamishop/ordenes/repository/OrdenJpaRepository.java =====
+package com.uamishop.ordenes.repository;
+
+import com.uamishop.ordenes.domain.Orden;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface OrdenRepository extends JpaRepository<Orden, UUID> {
+    
+}
+===== src/main/java/com/uamishop/ordenes/domain/ItemOrden.java =====
+package com.uamishop.ordenes.domain;
+
+import com.uamishop.shared.domain.Money;
+import com.uamishop.ventas.domain.ProductoRef;
+import java.math.BigDecimal;
+
+public class ItemOrden {
+    private final ItemOrdenId id;
+    private final ProductoRef productoRef;
+    private final int cantidad;
+    private final Money precioUnitario;
+
+    public ItemOrden(ItemOrdenId id, ProductoRef productoRef, int cantidad, Money precioUnitario) {
+        this.id = id;
+        this.productoRef = productoRef;
+        this.cantidad = cantidad;
+        this.precioUnitario = precioUnitario;
+    }
+    
+    public Money calcularSubtotal() {
+        return new Money(
+            precioUnitario.getMonto().multiply(new BigDecimal(cantidad)),
+            precioUnitario.getMoneda()
+        );
+    }
+    
+    public ProductoRef getProductoRef() { return productoRef; }
+    public int getCantidad() { return cantidad; }
+}
+
+===== src/main/java/com/uamishop/ordenes/domain/EstadoPago.java =====
+package com.uamishop.ordenes.domain;
+
+public enum EstadoPago {
+	 PENDIENTE,
+	 PROCESADO,
+	 RECHAZADO,
+	 REEMBOLSADO
+
+}
+
+===== src/main/java/com/uamishop/ordenes/domain/exception/OrdenException.java =====
+
+===== src/main/java/com/uamishop/ordenes/domain/InfoPago.java =====
+package com.uamishop.ordenes.domain;
+import java.time.LocalDateTime;
+
+public class InfoPago {
+	 private final String referencia;
+	    private final EstadoPago estado;
+	    private final LocalDateTime fechaProcesamiento;
+	    private final String metodoPago;
+
+	    public InfoPago(String referencia, EstadoPago estado, String metodoPago) {
+	        if (referencia == null || referencia.trim().isEmpty()) {
+	            throw new IllegalArgumentException("La referencia de pago no puede estar vacía");
+	        }
+	        
+	        this.referencia = referencia;
+	        this.estado = estado;
+	        this.fechaProcesamiento = LocalDateTime.now();
+	        this.metodoPago = metodoPago != null ? metodoPago : "";
+	    }
+
+	    // Getters
+	    public String getReferencia() { return referencia; }
+	    public EstadoPago getEstado() { return estado; }
+	    public LocalDateTime getFechaProcesamiento() { return fechaProcesamiento; }
+	    public String getMetodoPago() { return metodoPago; }
+
+}
+
+===== src/main/java/com/uamishop/ordenes/domain/Orden.java =====
+package com.uamishop.ordenes.domain;
+import com.uamishop.shared.domain.Money;
+import com.uamishop.ventas.domain.ClienteId;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Orden {
+    private final OrdenId id;
+    private final ClienteId clienteId;
+    private EstadoOrden estado;
+    private final List<ItemOrden> items;
+    private final DireccionEnvio direccionEnvio;
+    private final LocalDateTime fechaCreacion;
+    private final List<CambioEstado> historialEstados;
+
+    public Orden(OrdenId id, ClienteId clienteId, List<ItemOrden> items, 
+                 DireccionEnvio direccionEnvio) {
+        // RN-ORD-01
+        if (items.isEmpty()) {
+            throw new IllegalArgumentException("Debe tener items");
+        }
+        
+        this.id = id;
+        this.clienteId = clienteId;
+        this.items = new ArrayList<>(items);
+        this.direccionEnvio = direccionEnvio;
+        this.fechaCreacion = LocalDateTime.now();
+        this.estado = EstadoOrden.PENDIENTE;
+        this.historialEstados = new ArrayList<>();
+        
+        registrarCambioEstado(null, EstadoOrden.PENDIENTE, "Orden creada");
+    }
+
+    public void confirmar() {
+        // RN-ORD-05
+        if (estado != EstadoOrden.PENDIENTE) {
+            throw new IllegalStateException("Solo se puede confirmar si está PENDIENTE");
+        }
+        
+        estado = EstadoOrden.CONFIRMADA;
+        registrarCambioEstado(EstadoOrden.PENDIENTE, EstadoOrden.CONFIRMADA, "Confirmada");
+    }
+
+    public void marcarEnviada(String numeroGuia) {
+        // RN-ORD-10
+        if (estado != EstadoOrden.EN_PREPARACION) {
+            throw new IllegalStateException("Debe estar EN_PREPARACION");
+        }
+        
+        // RN-ORD-11 y RN-ORD-12
+        if (numeroGuia == null || numeroGuia.length() < 10) {
+            throw new IllegalArgumentException("Número de guía inválido");
+        }
+        
+        estado = EstadoOrden.ENVIADA;
+        registrarCambioEstado(EstadoOrden.EN_PREPARACION, EstadoOrden.ENVIADA, 
+                            "Enviada: " + numeroGuia);
+    }
+
+    public void cancelar(String motivo) {
+        // RN-ORD-14
+        if (estado == EstadoOrden.ENVIADA || estado == EstadoOrden.ENTREGADA) {
+            throw new IllegalStateException("No se puede cancelar");
+        }
+        
+        // RN-ORD-15 y RN-ORD-16
+        if (motivo == null || motivo.length() < 10) {
+            throw new IllegalArgumentException("Motivo inválido");
+        }
+        
+        EstadoOrden anterior = estado;
+        estado = EstadoOrden.CANCELADA;
+        registrarCambioEstado(anterior, EstadoOrden.CANCELADA, motivo);
+    }
+
+    private void registrarCambioEstado(EstadoOrden anterior, EstadoOrden nuevo, String motivo) {
+        historialEstados.add(new CambioEstado(anterior, nuevo, motivo));
+    }
+
+    public Money calcularTotal() {
+        return items.stream()
+            .map(ItemOrden::calcularSubtotal)
+            .reduce(new Money(new BigDecimal("0"), "MXN"), Money::sumar);
+    }
+    
+    // Getters
+    public OrdenId getId() { return id; }
+    public EstadoOrden getEstado() { return estado; }
+    public List<ItemOrden> getItems() { return new ArrayList<>(items); }
+    public List<CambioEstado> getHistorialEstados() { return new ArrayList<>(historialEstados); }
+}
+
+===== src/main/java/com/uamishop/ordenes/domain/ItemOrdenId.java =====
+package com.uamishop.ordenes.domain;
+
+public class ItemOrdenId {
+    private final String id;
+    public ItemOrdenId(String id) { this.id = id; }
+    public String getId() { return id; }
+}
+
+===== src/main/java/com/uamishop/ordenes/domain/EstadoOrden.java =====
+package com.uamishop.ordenes.domain;
+
+public enum EstadoOrden {
+	PENDIENTE,
+    CONFIRMADA,
+    EN_PREPARACION,
+    ENVIADA,
+    EN_TRANSITO,
+    ENTREGADA,
+    CANCELADA
+
+}
+
+===== src/main/java/com/uamishop/ordenes/domain/OrdenId.java =====
+package com.uamishop.ordenes.domain;
+
+public class OrdenId {
+	    private final String id;
+	    public OrdenId(String id) { this.id = id; }
+	    public String getId() { return id; }
+
+}
+
+===== src/main/java/com/uamishop/ordenes/domain/DireccionEnvio.java =====
+package com.uamishop.ordenes.domain;
+
+public class DireccionEnvio {
+	private final String calle;
+    private final String colonia;
+    private final String ciudad;
+    private final String estado;
+    private final String codigoPostal;
+    private final String pais;
+    private final String telefono;
+
+    public DireccionEnvio(String calle, String colonia, String ciudad, String estado,
+                         String codigoPostal, String pais, String telefono) {
+        // RN-VO-03
+        if (calle == null || calle.trim().isEmpty()) {
+            throw new IllegalArgumentException("Calle es obligatoria");
+        }
+        
+        // RN-ORD-03
+        if (!codigoPostal.matches("\\d{5}")) {
+            throw new IllegalArgumentException("Código postal inválido");
+        }
+        
+        // RN-VO-04
+        if (!"México".equalsIgnoreCase(pais)) {
+            throw new IllegalArgumentException("Solo México");
+        }
+        
+        // RN-ORD-04
+        if (!telefono.matches("\\d{10}")) {
+            throw new IllegalArgumentException("Teléfono inválido");
+        }
+        
+        this.calle = calle;
+        this.colonia = colonia;
+        this.ciudad = ciudad;
+        this.estado = estado;
+        this.codigoPostal = codigoPostal;
+        this.pais = pais;
+        this.telefono = telefono;
+    }
+    
+    public String getCodigoPostal() { return codigoPostal; }
+    public String getTelefono() { return telefono; }
+}
+
+===== src/main/java/com/uamishop/ordenes/domain/CambioEstado.java =====
+package com.uamishop.ordenes.domain;
+import java.time.LocalDateTime;
+
+public class CambioEstado {
+	private final EstadoOrden estadoAnterior;
+    private final EstadoOrden nuevoEstado;
+    private final LocalDateTime fecha;
+    private final String motivo;
+
+    public CambioEstado(EstadoOrden estadoAnterior, EstadoOrden nuevoEstado, String motivo) {
+        this.estadoAnterior = estadoAnterior;
+        this.nuevoEstado = nuevoEstado;
+        this.fecha = LocalDateTime.now();
+        this.motivo = motivo;
+    }
+    
+    public EstadoOrden getNuevoEstado() { return nuevoEstado; }
+    public String getMotivo() { return motivo; }
+
+}
+
+===== src/main/java/com/uamishop/ordenes/service/OrdenService.java =====
+package com.uamishop.ordenes.service;
+
+import com.uamishop.ordenes.domain.*;
+import com.uamishop.ordenes.repository.OrdenJpaRepository;
+import com.uamishop.ventas.service.CarritoService;
+import org.springframework.stereotype.Service;
+
+import java.util.UUID;
+
+@Service
+public class OrdenService {
+
+    private final OrdenJpaRepository ordenRepository;
+    private final CarritoService carritoService;
+
+    public OrdenService(OrdenJpaRepository ordenRepository,
+            CarritoService carritoService
+        ) {
+        this.ordenRepository = ordenRepository;
+        this.carritoService = carritoService;
+    }
+
+    public Orden crear(OrdenRequest request) {
+
+        Orden orden = Orden.crear(
+            request.getClienteId(),
+            request.getItems(),
+            request.getDireccionEnvio()
+        );
+
+        return ordenRepository.save(orden);
+    }
+
+    public Orden crearDesdeCarrito(UUID carritoId,
+            DireccionEnvio direccionEnvio
+        ) {
+
+        var carrito = carritoService.obtenerCarrito(carritoId);
+
+        Orden orden = Orden.crearDesdeCarrito(carrito, direccionEnvio);
+
+        ordenRepository.save(orden);
+
+        carritoService.completarCheckout(carritoId);
+
+        return orden;
+    }
+
+    public Orden buscarPorId(UUID id) {
+        return ordenRepository.findById(id).orElseThrow(() -> new RuntimeException("Orden no encontrada"));
+    }
+
+    public Orden buscarTodas() {
+        return ordenRepository.findAll();
+    }
+
+    public Orden confirmar(UUID id) {
+        Orden orden = buscarPorId(id);
+        orden.confirmar();
+        return ordenRepository.save(orden);
+    }
+
+    public Orden procesarPago(UUID id, String referencia) {
+        Orden orden = buscarPorId(id);
+        orden.procesarPago(referencia);
+        return ordenRepository.save(orden);
+    }
+
+    public Orden cancelar(UUID id, String motivo) {
+        Orden orden = buscarPorId(id);
+        orden.cancelar(motivo);
+        return ordenRepository.save(orden);
+    }
+}
+
+===== src/main/java/com/uamishop/ventas/controller/dto/CrearCarritoRequest.java =====
+package com.uamishop.ventas.controller.dto;
+
+import jakarta.validation.constraints.NotBlank;
+
+public class CrearCarritoRequest {
+
+    //Usamos la validación de String no nulo y con al menos un caracter visible
+    @NotBlank(message = "El clienteId es obligatorio")
+    private String clienteId;
+
+    public String getClienteId() { 
+        return clienteId; 
+    }
+
+    public void setClienteId(String clienteId) { 
+        this.clienteId = clienteId; 
+    }
+}
+===== src/main/java/com/uamishop/ventas/controller/dto/AgregarItemRequest.java =====
+package com.uamishop.ventas.controller.dto;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
+import java.math.BigDecimal;
+
+public class AgregarItemRequest {
+
+    /*LAS VALIDACIONES SE ACTIVAN EN EL CONTROLLER */
+
+    @NotBlank(message = "El productoId es obligatorio")
+    private String productoId;
+
+    @NotNull(message = "La cantidad es obligatoria")
+    @Positive(message = "La cantidad debe ser mayor a 0")
+    private Integer cantidad; //Se coloca en Integer porque si es int nunca puede ser null
+
+    @NotNull(message = "El precioUnitario es obligatorio")
+    @Positive(message = "El precioUnitario debe ser mayor a 0")
+    private BigDecimal precioUnitario;
+
+    public String getProductoId() { 
+        return productoId; 
+    }
+
+    public void setProductoId(String productoId) { 
+        this.productoId = productoId; 
+    }
+
+    public Integer getCantidad() { 
+        return cantidad; 
+    }
+
+    public void setCantidad(Integer cantidad) { 
+        this.cantidad = cantidad; 
+    }
+
+    public BigDecimal getPrecioUnitario() { 
+        return precioUnitario; 
+    }
+
+    public void setPrecioUnitario(BigDecimal precioUnitario) { 
+        this.precioUnitario = precioUnitario; 
+    }
+}
+===== src/main/java/com/uamishop/ventas/controller/dto/AgregarItemResponse.java =====
+package com.uamishop.ventas.controller.dto;
+
+import java.math.BigDecimal;
+import java.util.UUID;
+
+public class AgregarItemResponse {
+
+    private UUID productoId;
+    private Integer cantidad;
+    private BigDecimal precioUnitario;
+    private BigDecimal subtotal;
+
+    // getters y setters
+}
+===== src/main/java/com/uamishop/ventas/controller/dto/CarritoResponse.java =====
+package com.uamishop.ventas.controller.dto;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.UUID;
+
+public class CarritoResponse {
+
+    private UUID id;
+    private UUID clienteId;
+    private List<AgregarItemResponse> items;
+    private BigDecimal total;
+
+    // getters y setters
+}
+===== src/main/java/com/uamishop/ventas/controller/CarritoController.java =====
+package com.uamishop.ventas.controller;
+
+import com.uamishop.ventas.controller.dto.AgregarItemRequest;
+import com.uamishop.ventas.controller.dto.CrearCarritoRequest;
+import com.uamishop.ventas.domain.Carrito;
+import com.uamishop.ventas.service.CarritoService;
+import com.uamishop.shared.domain.Money;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
+import java.util.UUID;
+
+@RestController // Registra esta clase como un controlador REST en Spring Boot y define la ruta base para las operaciones relacionadas con carritos (Retorna datos en formato JSON y maneja solicitudes HTTP)
+@RequestMapping("/api/carritos") // Define la ruta base para las operaciones relacionadas con carritos 
+public class CarritoController { // Controlador REST para gestionar carritos de compra y sus operaciones asociadas (crear, obtener, agregar productos, finalizar compra)
+
+    @Autowired
+    private CarritoService carritoService;
+
+    // POST /api/carritos - Crea un nuevo carrito para un cliente
+    @PostMapping
+    public ResponseEntity<Carrito> crear(@Valid @RequestBody CrearCarritoRequest request) { // Maneja la solicitud POST para crear un nuevo carrito, recibe los datos del cliente en el cuerpo de la solicitud y devuelve el carrito creado con su ubicación
+        Carrito carrito = carritoService.crearCarrito(UUID.fromString(request.getClienteId())); // Llama al servicio para crear un nuevo carrito utilizando el ID del cliente proporcionado en la solicitud
+        return ResponseEntity.created(URI.create("/api/carritos/" + carrito.getId().toString())) // Devuelve una respuesta HTTP 201 Created con la ubicación del nuevo carrito y el carrito creado en el cuerpo de la respuesta
+                .body(carrito);// Devuelve el carrito creado en el cuerpo de la respuesta HTTP.
+    }
+
+    // GET /api/carritos/{id} - Obtiene un carrito existente por su ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Carrito> obtener(@PathVariable String id) {
+        return carritoService.obtenerCarrito(UUID.fromString(id))
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // POST /api/carritos/{id}/items - Agrega un producto al carrito
+    @PostMapping("/{id}/items")
+    public ResponseEntity<Carrito> agregarItem(@PathVariable UUID id, @Valid @RequestBody AgregarItemRequest req) {
+        // Crea el objeto Money con el precio unitario en moneda MXN
+        Money precio = new Money(req.getPrecioUnitario(), "MXN");
+        
+        // Llama al servicio para agregar el producto al carrito
+        Carrito carrito = carritoService.agregarProducto(
+                UUID.fromString(id),
+                UUID.fromString(req.getProductoId()),
+                req.getCantidad(),
+                precio
+        );
+        return ResponseEntity.ok(carrito);
+    }
+
+    // POST /api/carritos/{id}/checkout - Finaliza la compra y procesa el carrito
+    @PostMapping("/{id}/checkout")
+    public ResponseEntity<Void> checkout(@PathVariable String id) {
+        // Llama al servicio para completar la compra
+        carritoService.finalizarCompra(UUID.fromString(id));
+        return ResponseEntity.accepted().build();
+    }
+}
+===== src/main/java/com/uamishop/ventas/repository/CarritoJpaRepository.java =====
+package com.uamishop.ventas.repository;
+
+import com.uamishop.ventas.domain.Carrito;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.UUID;
+
+public interface CarritoRepository extends JpaRepository<Carrito, UUID> {
+    
+}
+===== src/main/java/com/uamishop/ventas/domain/ClienteId.java =====
+package com.uamishop.ventas.domain;
+
+public class ClienteId {
+	    private final String id;
+	    public ClienteId(String id) { this.id = id; }
+	    public String getId() { return id; }
+
+}
+
+===== src/main/java/com/uamishop/ventas/domain/exception/CrritoException.java =====
+
+===== src/main/java/com/uamishop/ventas/domain/ItemCarrito.java =====
+package com.uamishop.ventas.domain;
+import com.uamishop.shared.domain.Money;
+import java.math.BigDecimal;
+
+public class ItemCarrito {
+    private final ItemCarritoId id;
+    private final ProductoRef productoRef;
+    private int cantidad;
+    private final Money precioUnitario;
+
+    public ItemCarrito(ItemCarritoId id, ProductoRef productoRef, int cantidad, Money precioUnitario) {
+        // RN-VEN-01
+        if (cantidad <= 0) {
+            throw new IllegalArgumentException("Cantidad debe ser > 0");
+        }
+        
+        // RN-VEN-02
+        if (cantidad > 10) {
+            throw new IllegalArgumentException("Máximo 10 unidades");
+        }
+        
+        this.id = id;
+        this.productoRef = productoRef;
+        this.cantidad = cantidad;
+        this.precioUnitario = precioUnitario;
+    }
+    
+    public Money calcularSubtotal() {
+        return new Money(
+            precioUnitario.getMonto().multiply(new BigDecimal(cantidad)),
+            precioUnitario.getMoneda()
+        );
+    }
+    
+    // Getters
+    public ItemCarritoId getId() { return id; }
+    public ProductoRef getProductoRef() { return productoRef; }
+    public int getCantidad() { return cantidad; }
+    public Money getPrecioUnitario() { return precioUnitario; }
+}
+
+===== src/main/java/com/uamishop/ventas/domain/CarritoId.java =====
+package com.uamishop.ventas.domain;
+
+public class CarritoId {
+	private final String id;
+    public CarritoId(String id) { this.id = id; }
+    public String getId() { return id; }
+	
+
+}
+
+===== src/main/java/com/uamishop/ventas/domain/Carrito.java =====
+package com.uamishop.ventas.domain;
+import com.uamishop.shared.domain.Money;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+public class Carrito {
+    private final CarritoId id;
+    private final ClienteId clienteId;
+    private EstadoCarrito estado;
+    private final List<ItemCarrito> items;
+    private DescuentoAplicado descuentoAplicado;
+
+    public Carrito(CarritoId id, ClienteId clienteId) {
+        this.id = id;
+        this.clienteId = clienteId;
+        this.estado = EstadoCarrito.ACTIVO;
+        this.items = new ArrayList<>();
+        this.descuentoAplicado = null;
+    }
+
+    public void agregarProducto(ProductoRef productoRef, int cantidad, Money precio) {
+        validarModificable();
+        
+        // RN-VEN-03
+        if (items.size() >= 20 && !existeProducto(productoRef.getProductoId())) {
+            throw new IllegalStateException("Máximo 20 productos diferentes");
+        }
+        
+        Optional<ItemCarrito> itemExistente = buscarItem(productoRef.getProductoId());
+        
+        if (itemExistente.isPresent()) {
+            // RN-VEN-04
+            ItemCarrito item = itemExistente.get();
+            int nuevaCantidad = item.getCantidad() + cantidad;
+            if (nuevaCantidad > 10) {
+                throw new IllegalArgumentException("Máximo 10 unidades por producto");
+            }
+            // Simplemente actualizamos (en realidad necesitaríamos un método)
+            items.remove(item);
+            items.add(new ItemCarrito(item.getId(), productoRef, nuevaCantidad, precio));
+        } else {
+            items.add(new ItemCarrito(
+                new ItemCarritoId("ITEM-" + items.size()),
+                productoRef, cantidad, precio
+            ));
+        }
+    }
+
+    public void iniciarCheckout() {
+        // RN-VEN-10
+        if (items.isEmpty()) {
+            throw new IllegalStateException("Carrito vacío");
+        }
+        
+        // RN-VEN-11
+        if (estado != EstadoCarrito.ACTIVO) {
+            throw new IllegalStateException("Carrito no está ACTIVO");
+        }
+        
+        // RN-VEN-12
+        if (calcularSubtotal().getMonto().compareTo(new BigDecimal("50")) <= 0) {
+            throw new IllegalStateException("Mínimo $50 de compra");
+        }
+        
+        estado = EstadoCarrito.EN_CHECKOUT;
+    }
+
+    public void aplicarDescuento(String codigo, BigDecimal porcentaje) {
+        // RN-VEN-15
+        if (descuentoAplicado != null) {
+            throw new IllegalStateException("Ya tiene un descuento");
+        }
+        
+        descuentoAplicado = new DescuentoAplicado(codigo, porcentaje, calcularSubtotal());
+    }
+
+    private void validarModificable() {
+        if (estado == EstadoCarrito.EN_CHECKOUT) {
+            throw new IllegalStateException("No se puede modificar en checkout");
+        }
+    }
+
+    private boolean existeProducto(com.uamishop.catalogo.domain.ProductoId productoId) {
+        return items.stream()
+            .anyMatch(item -> item.getProductoRef().getProductoId().equals(productoId));
+    }
+
+    private Optional<ItemCarrito> buscarItem(com.uamishop.catalogo.domain.ProductoId productoId) {
+        return items.stream()
+            .filter(item -> item.getProductoRef().getProductoId().equals(productoId))
+            .findFirst();
+    }
+
+    public Money calcularSubtotal() {
+        return items.stream()
+            .map(ItemCarrito::calcularSubtotal)
+            .reduce(new Money(new BigDecimal("0"), "MXN"), Money::sumar);
+    }
+    
+    // Getters
+    public CarritoId getId() { return id; }
+    public EstadoCarrito getEstado() { return estado; }
+    public List<ItemCarrito> getItems() { return new ArrayList<>(items); }
+    public DescuentoAplicado getDescuentoAplicado() { return descuentoAplicado; }
+}
+
+===== src/main/java/com/uamishop/ventas/domain/DescuentoAplicado.java =====
+package com.uamishop.ventas.domain;
+import com.uamishop.shared.domain.Money;
+import java.math.BigDecimal;
+
+public class DescuentoAplicado {
+    private final String codigo;
+    private final BigDecimal porcentaje;
+    private final Money montoDescuento;
+
+    public DescuentoAplicado(String codigo, BigDecimal porcentaje, Money subtotal) {
+        // RN-VEN-16
+        if (porcentaje.compareTo(new BigDecimal("30")) > 0) {
+            throw new IllegalArgumentException("Máximo 30% de descuento");
+        }
+        
+        this.codigo = codigo;
+        this.porcentaje = porcentaje;
+        
+        // Calcular monto
+        BigDecimal descuento = subtotal.getMonto()
+            .multiply(porcentaje)
+            .divide(new BigDecimal("100"));
+        this.montoDescuento = new Money(descuento, subtotal.getMoneda());
+    }
+    
+    public String getCodigo() { return codigo; }
+    public Money getMontoDescuento() { return montoDescuento; }
+}
+
+===== src/main/java/com/uamishop/ventas/domain/ItemCarritoId.java =====
+package com.uamishop.ventas.domain;
+
+public class ItemCarritoId {
+    private final String id;
+    public ItemCarritoId(String id) { this.id = id; }
+    public String getId() { return id; }
+	
+
+}
+
+===== src/main/java/com/uamishop/ventas/domain/ProductoRef.java =====
+package com.uamishop.ventas.domain;
+import com.uamishop.catalogo.domain.ProductoId;
+
+public class ProductoRef {
+	    private final ProductoId productoId;
+	    private final String nombre;
+	    private final String sku;
+
+	    public ProductoRef(ProductoId productoId, String nombre, String sku) {
+	        // RN-VO-05
+	        if (!sku.matches("[A-Z]{3}-\\d{3}")) {
+	            throw new IllegalArgumentException("SKU inválido");
+	        }
+	        this.productoId = productoId;
+	        this.nombre = nombre;
+	        this.sku = sku;
+	    }
+	    
+	    public ProductoId getProductoId() { return productoId; }
+	    public String getNombre() { return nombre; }
+}
+
+===== src/main/java/com/uamishop/ventas/domain/EstadoCarrito.java =====
+package com.uamishop.ventas.domain;
+
+public enum EstadoCarrito {
+	    ACTIVO,
+	    EN_CHECKOUT,
+	    COMPLETADO,
+	    ABANDONADO
+
+}
+
+===== src/main/java/com/uamishop/ventas/service/CarritoService.java =====
+package com.uamishop.ventas.service;
+
+import com.uamishop.ventas.domain.*;
+import com.uamishop.ventas.repository.CarritoJpaRepository;
+import org.springframework.stereotype.Service;
+
+import java.util.UUID;
+
+@Service
+public class CarritoService {
+
+    private final CarritoJpaRepository carritoRepository;
+
+    public CarritoService(CarritoJpaRepository carritoRepository) {
+        this.carritoRepository = carritoRepository;
+    }
+
+    public Carrito crear(ClienteId clienteId) {
+
+        Carrito carrito = new Carrito(UUID.randomUUID(), clienteId);
+        return carritoRepository.save(carrito);
+    }
+
+    public Carrito obtenerCarrito(UUID carritoId) {
+        return carritoRepository.findById(carritoId).orElseThrow(() -> new RuntimeException("Carrito no encontrado"));
+    }
+
+    public Carrito agregarProducto(
+            UUID carritoId,
+            ProductoRef producto,
+            int cantidad,
+            Money precioUnitario
+        ) {
+
+        Carrito carrito = obtenerCarrito(carritoId);
+        carrito.agregarProducto(producto, cantidad, precioUnitario);
+
+        return carritoRepository.save(carrito);
+    }
+
+    public Carrito modificarCantidad(
+            UUID carritoId,
+            ProductoId productoId,
+            int nuevaCantidad
+        ) {
+
+        Carrito carrito = obtenerCarrito(carritoId);
+        carrito.modificarCantidad(productoId, nuevaCantidad);
+
+        return carritoRepository.save(carrito);
+    }
+
+    public Carrito eliminarProducto(UUID carritoId, ProductoId productoId) {
+        Carrito carrito = obtenerCarrito(carritoId);
+        carrito.eliminarProducto(productoId);
+        return carritoRepository.save(carrito);
+    }
+
+    public Carrito vaciar(UUID carritoId) {
+        Carrito carrito = obtenerCarrito(carritoId);
+        carrito.vaciar();
+        return carritoRepository.save(carrito);
+    }
+
+    public Carrito iniciarCheckout(UUID carritoId) {
+        Carrito carrito = obtenerCarrito(carritoId);
+        carrito.iniciarCheckout();
+        return carritoRepository.save(carrito);
+    }
+
+    public Carrito completarCheckout(UUID carritoId) {
+        Carrito carrito = obtenerCarrito(carritoId);
+        carrito.completarCheckout();
+        return carritoRepository.save(carrito);
+    }
+
+    public Carrito abandonar(UUID carritoId) {
+        Carrito carrito = obtenerCarrito(carritoId);
+        carrito.abandonar();
+        return carritoRepository.save(carrito);
+    }
+}
+
+===== src/main/java/com/uamishop/shared/exception/DomainException.java =====
+
+===== src/main/java/com/uamishop/shared/domain/ClienteId.java =====
+
+===== src/main/java/com/uamishop/shared/domain/Money.java =====
+package com.uamishop.shared.domain;
+import java.math.BigDecimal;
+import java.util.Currency;
+import java.util.Objects;
+
+public class Money {
+	 private final BigDecimal monto;
+	    private final String moneda;
+
+	    public Money(BigDecimal monto, String moneda) {
+	        if (monto.compareTo(BigDecimal.ZERO) < 0) {
+	            throw new IllegalArgumentException("Monto no puede ser negativo");
+	        }
+	        this.monto = monto;
+	        this.moneda = moneda;
+	    }
+
+	    public BigDecimal getMonto() {
+	        return monto;
+	    }
+
+	    public String getMoneda() {
+	        return moneda;
+	    }
+		public Money sumar(Money otro) {
+        if (otro == null) {
+            throw new IllegalArgumentException("Money a sumar no puede ser null");
+        }
+        if (!this.moneda.equals(otro.moneda)) {
+            throw new IllegalArgumentException("No se pueden sumar montos con distinta moneda");
+        }
+        return new Money(this.monto.add(otro.monto), this.moneda);
+    }
+}
+
+===== src/main/java/com/uamishop/OpenApiConfig.java =====
+package com.uamishop;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
+
+@Configuration
+public class OpenApiConfig {
+  
+    @Bean
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+                .info(new Info()
+                        .title("Mi uamishop API")         
+                        .version("1.0")                       
+                        .description("API de nuestra tienda uamishop para la gestión de productos, órdenes y ventas") 
+                        .contact(new Contact()
+                                .name("<Los Animaniacs")   
+                                .url("https://uamishop.com")         
+                                .email("animaniacs409@izt.uam.mx"))   
+                        .license(new License()
+                                .name("Apache 2.0")         
+                                .url("http://springdoc.org")));   
+    }
+}

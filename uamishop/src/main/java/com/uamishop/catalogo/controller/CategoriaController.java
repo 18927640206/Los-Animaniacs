@@ -1,3 +1,20 @@
+package com.uamishop.catalogo.controller;
+
+import com.uamishop.catalogo.controller.dto.CategoriaRequest;
+import com.uamishop.catalogo.controller.dto.CategoriaResponse;
+import com.uamishop.catalogo.controller.dto.ProductoResponse;
+import com.uamishop.catalogo.service.CategoriaService;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/categorias")
 @RequiredArgsConstructor

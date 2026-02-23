@@ -1,6 +1,12 @@
 package com.uamishop.ventas.service;
 
-import com.uamishop.ventas.domain.*;
+import com.uamishop.ventas.domain.Carrito;
+import com.uamishop.ventas.domain.CarritoId;
+import com.uamishop.ventas.domain.ProductoRef;
+import com.uamishop.ventas.domain.ProductoId;
+import com.uamishop.shared.domain.ClienteId;
+import com.uamishop.shared.domain.Money;
+
 import com.uamishop.ventas.repository.CarritoJpaRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +23,9 @@ public class CarritoService {
 
     public Carrito crear(ClienteId clienteId) {
 
-        Carrito carrito = new Carrito(UUID.randomUUID(), clienteId);
+        Carrito carrito = new Carrito(
+            new CarritoId(UUID.randomUUID().toString()),
+            clienteId);
         return carritoRepository.save(carrito);
     }
 
@@ -38,6 +46,7 @@ public class CarritoService {
         return carritoRepository.save(carrito);
     }
 
+    /*
     public Carrito modificarCantidad(
             UUID carritoId,
             ProductoId productoId,
@@ -61,13 +70,13 @@ public class CarritoService {
         carrito.vaciar();
         return carritoRepository.save(carrito);
     }
-
+    */
     public Carrito iniciarCheckout(UUID carritoId) {
         Carrito carrito = obtenerCarrito(carritoId);
         carrito.iniciarCheckout();
         return carritoRepository.save(carrito);
     }
-
+    /*
     public Carrito completarCheckout(UUID carritoId) {
         Carrito carrito = obtenerCarrito(carritoId);
         carrito.completarCheckout();
@@ -79,4 +88,5 @@ public class CarritoService {
         carrito.abandonar();
         return carritoRepository.save(carrito);
     }
+    */
 }

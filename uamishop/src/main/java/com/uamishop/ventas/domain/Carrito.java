@@ -1,5 +1,8 @@
 package com.uamishop.ventas.domain;
+
 import com.uamishop.shared.domain.Money;
+import com.uamishop.shared.domain.ClienteId;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;

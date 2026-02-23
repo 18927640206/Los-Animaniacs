@@ -1,3 +1,20 @@
+package com.uamishop.ordenes.controller;
+
+import com.uamishop.ordenes.controller.dto.OrdenRequest;
+import com.uamishop.ordenes.controller.dto.OrdenResponse;
+import com.uamishop.ordenes.controller.dto.EstadoRequest;
+import com.uamishop.ordenes.service.OrdenService;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/ordenes")
 @RequiredArgsConstructor
