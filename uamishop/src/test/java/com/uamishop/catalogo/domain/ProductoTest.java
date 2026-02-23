@@ -13,6 +13,7 @@ class ProductoTest {
         Money precio = new Money(new BigDecimal("100"), "MXN");
         CategoriaId catId = new CategoriaId("CAT1");
         
+        // Ajustado al constructor que definimos en la práctica anterior
         Producto p = new Producto(id, "Laptop", "Desc", precio, catId);
         
         assertEquals("Laptop", p.getNombre());

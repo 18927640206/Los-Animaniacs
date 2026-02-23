@@ -1,6 +1,7 @@
 package com.uamishop.ventas.domain;
 
 import com.uamishop.catalogo.domain.ProductoId;
+import com.uamishop.shared.domain.ClienteId;
 import com.uamishop.shared.domain.Money;
 import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;

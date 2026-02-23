@@ -12,5 +12,9 @@ public class CategoriaRequest {
     @Size(max = 200, message = "La descripcion no puede exceder de 200 caracteres")
     private String descripcion;
 
-    // getters y setters
+    // Getters y setters agregados
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 }

@@ -40,7 +40,6 @@ public class Carrito {
             if (nuevaCantidad > 10) {
                 throw new IllegalArgumentException("Máximo 10 unidades por producto");
             }
-            // Simplemente actualizamos (en realidad necesitaríamos un método)
             items.remove(item);
             items.add(new ItemCarrito(item.getId(), productoRef, nuevaCantidad, precio));
         } else {
@@ -49,6 +48,37 @@ public class Carrito {
                 productoRef, cantidad, precio
             ));
         }
+    }
+
+    public void modificarCantidad(com.uamishop.catalogo.domain.ProductoId productoId, int nuevaCantidad) {
+        validarModificable();
+        // RN-VEN-05
+        if (nuevaCantidad <= 0) {
+            throw new IllegalArgumentException("La nueva cantidad debe ser > 0. Use eliminarProducto.");
+        }
+        
+        ItemCarrito item = buscarItem(productoId)
+            .orElseThrow(() -> new IllegalArgumentException("El producto no existe en el carrito"));
+            
+        if (nuevaCantidad > 10) {
+            throw new IllegalArgumentException("Máximo 10 unidades por producto");
+        }
+        
+        items.remove(item);
+        items.add(new ItemCarrito(item.getId(), item.getProductoRef(), nuevaCantidad, item.getPrecioUnitario()));
+    }
+
+    public void eliminarProducto(com.uamishop.catalogo.domain.ProductoId productoId) {
+        validarModificable(); // RN-VEN-07
+        ItemCarrito item = buscarItem(productoId)
+            .orElseThrow(() -> new IllegalArgumentException("El producto no existe en el carrito")); // RN-VEN-08
+        items.remove(item);
+    }
+
+    public void vaciar() {
+        validarModificable(); // RN-VEN-09
+        items.clear();
+        descuentoAplicado = null;
     }
 
     public void iniciarCheckout() {
@@ -68,6 +98,22 @@ public class Carrito {
         }
         
         estado = EstadoCarrito.EN_CHECKOUT;
+    }
+
+    public void completarCheckout() {
+        // RN-VEN-13
+        if (estado != EstadoCarrito.EN_CHECKOUT) {
+            throw new IllegalStateException("Solo se puede completar si está EN_CHECKOUT");
+        }
+        estado = EstadoCarrito.COMPLETADO;
+    }
+
+    public void abandonar() {
+        // RN-VEN-14
+        if (estado != EstadoCarrito.EN_CHECKOUT) {
+            throw new IllegalStateException("Solo se puede abandonar si está EN_CHECKOUT");
+        }
+        estado = EstadoCarrito.ABANDONADO;
     }
 
     public void aplicarDescuento(String codigo, BigDecimal porcentaje) {

@@ -17,5 +17,13 @@ public class CrearOrdenRequest {
     @Valid
     private DireccionEnvioRequest direccionEnvio;
 
-    // getters y setters
+    // Getters y Setters
+    public String getClienteId() { return clienteId; }
+    public void setClienteId(String clienteId) { this.clienteId = clienteId; }
+
+    public List<ItemOrdenRequest> getItems() { return items; }
+    public void setItems(List<ItemOrdenRequest> items) { this.items = items; }
+
+    public DireccionEnvioRequest getDireccionEnvio() { return direccionEnvio; }
+    public void setDireccionEnvio(DireccionEnvioRequest direccionEnvio) { this.direccionEnvio = direccionEnvio; }
 }

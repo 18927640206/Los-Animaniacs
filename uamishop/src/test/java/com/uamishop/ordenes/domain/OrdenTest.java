@@ -1,7 +1,7 @@
 package com.uamishop.ordenes.domain;
 
 import com.uamishop.shared.domain.Money;
-import com.uamishop.ventas.domain.ClienteId;
+import com.uamishop.shared.domain.ClienteId;
 import com.uamishop.ventas.domain.ProductoRef;
 import com.uamishop.catalogo.domain.ProductoId;
 import org.junit.jupiter.api.Test;

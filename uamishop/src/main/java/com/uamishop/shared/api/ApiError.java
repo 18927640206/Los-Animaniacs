@@ -3,7 +3,6 @@ package com.uamishop.shared.api;
 import java.time.LocalDateTime;
 
 public class ApiError {
-
     private int status;
     private String error;
     private String message;
@@ -18,6 +17,7 @@ public class ApiError {
         this.timestamp = LocalDateTime.now();
     }
 
+    // Getters
     public int getStatus() { return status; }
     public String getError() { return error; }
     public String getMessage() { return message; }

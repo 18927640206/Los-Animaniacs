@@ -9,20 +9,19 @@ import io.swagger.v3.oas.models.info.License;
 
 @Configuration
 public class OpenApiConfig {
-  
+
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Mi uamishop API")         
-                        .version("1.0")                       
-                        .description("API de nuestra tienda uamishop para la gestión de productos, órdenes y ventas") 
+                        .title("API de UamiShop")
+                        .version("1.0")
+                        .description("Documentación del API REST para el sistema de ventas UamiShop")
                         .contact(new Contact()
-                                .name("<Los Animaniacs")   
-                                .url("https://uamishop.com")         
-                                .email("animaniacs409@izt.uam.mx"))   
+                                .name("Los Animaniacs")
+                                .email("tu-correo@uam.mx"))
                         .license(new License()
-                                .name("Apache 2.0")         
-                                .url("http://springdoc.org")));   
+                                .name("API License")
+                                .url("https://www.uam.mx")));
     }
 }

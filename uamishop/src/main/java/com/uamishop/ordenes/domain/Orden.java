@@ -31,6 +31,11 @@ public class Orden {
         this.historialEstados = new ArrayList<>();
         
         registrarCambioEstado(null, EstadoOrden.PENDIENTE, "Orden creada");
+        
+        // RN-ORD-02
+        if (calcularTotal().getMonto().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("El total de la orden debe ser mayor a cero");
+        }
     }
 
     public void confirmar() {
@@ -41,6 +46,29 @@ public class Orden {
         
         estado = EstadoOrden.CONFIRMADA;
         registrarCambioEstado(EstadoOrden.PENDIENTE, EstadoOrden.CONFIRMADA, "Confirmada");
+    }
+
+    public void procesarPago(String referenciaPago) {
+        // RN-ORD-07
+        if (estado != EstadoOrden.CONFIRMADA) {
+            throw new IllegalStateException("Solo se puede procesar pago si la orden está CONFIRMADA");
+        }
+        // RN-ORD-08
+        if (referenciaPago == null || referenciaPago.trim().isEmpty()) {
+            throw new IllegalArgumentException("La referencia de pago no puede estar vacía");
+        }
+        
+        registrarCambioEstado(estado, EstadoOrden.PAGO_PROCESADO, "Pago procesado con ref: " + referenciaPago);
+        estado = EstadoOrden.PAGO_PROCESADO;
+    }
+
+    public void marcarEnProceso() {
+        // RN-ORD-09
+        if (estado != EstadoOrden.PAGO_PROCESADO) {
+            throw new IllegalStateException("Solo se puede marcar en proceso si el pago fue procesado");
+        }
+        registrarCambioEstado(estado, EstadoOrden.EN_PREPARACION, "Orden en preparación");
+        estado = EstadoOrden.EN_PREPARACION;
     }
 
     public void marcarEnviada(String numeroGuia) {
@@ -57,6 +85,15 @@ public class Orden {
         estado = EstadoOrden.ENVIADA;
         registrarCambioEstado(EstadoOrden.EN_PREPARACION, EstadoOrden.ENVIADA, 
                             "Enviada: " + numeroGuia);
+    }
+
+    public void marcarEntregada() {
+        // RN-ORD-13
+        if (estado != EstadoOrden.ENVIADA && estado != EstadoOrden.EN_TRANSITO) {
+            throw new IllegalStateException("Solo se puede marcar entregada si está ENVIADA o EN_TRANSITO");
+        }
+        registrarCambioEstado(estado, EstadoOrden.ENTREGADA, "Orden entregada al cliente");
+        estado = EstadoOrden.ENTREGADA;
     }
 
     public void cancelar(String motivo) {
