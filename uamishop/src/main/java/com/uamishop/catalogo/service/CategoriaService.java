@@ -35,8 +35,10 @@ public class CategoriaService {
     }
 
     public CategoriaResponse actualizar(UUID id, CategoriaRequest request) {
-        Categoria categoria = categoriaRepository.findById(id)
-                .orElseThrow(() -> new DomainException("Categoría no encontrada"));
+        //Aqui tambien se justa lo del UUID
+        CategoriaId catId = new CategoriaId(id.toString());
+        Categoria categoria = categoriaRepository.findById(catId)
+            .orElseThrow(() -> new DomainException("Categoría no encontrada"));
         
         // Actualizamos los datos usando los métodos del dominio
         categoria.actualizarNombre(request.getNombre());
@@ -46,9 +48,15 @@ public class CategoriaService {
         return mapearAResponse(categoria);
     }
 
+    //Aqui habia un error porque pasaba un 'java.util.UUID'
     public CategoriaResponse buscarPorId(UUID id) {
-        Categoria categoria = categoriaRepository.findById(id)
-                .orElseThrow(() -> new DomainException("Categoría no encontrada"));
+        //Convertimos el UUID a nuestro value Object del dominio
+        CategoriaId catId = new CategoriaId(id.toString());
+
+        //buscamos usando el tipo correcto
+        Categoria categoria = categoriaRepository.findById(catId) 
+            .orElseThrow(() -> new DomainException("Categoría no encontrada"));
+
         return mapearAResponse(categoria);
     }
 
@@ -60,7 +68,7 @@ public class CategoriaService {
     }
 
     public void eliminar(UUID id) {
-        categoriaRepository.deleteById(id);
+        categoriaRepository.deleteById(new CategoriaId(id.toString()));
     }
 
     public List<ProductoResponse> obtenerProductos(UUID id) {
