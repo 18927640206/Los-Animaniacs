@@ -11,7 +11,8 @@ import java.math.BigDecimal;
 @Embeddable
 public class ItemCarrito {
     
-    @Column(name = "item_id")
+    @Embedded
+    @AttributeOverride(name = "id", column = @Column(name = "item_id"))
     private ItemCarritoId id;
 
     @Embedded

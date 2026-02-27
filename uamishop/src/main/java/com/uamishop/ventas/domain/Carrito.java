@@ -29,7 +29,10 @@ public class Carrito {
 
     // CAMBIO AQUÍ: Mapeo de la colección para JPA
     @ElementCollection(fetch = FetchType.EAGER) 
-    @CollectionTable(name = "CARRITO_ITEMS", joinColumns = @JoinColumn(name = "carrito_id"))
+    @CollectionTable(
+        name = "CARRITO_ITEMS",
+        joinColumns = @JoinColumn(name = "carrito_id")
+    )
     private List<ItemCarrito> items; // quitamos 'final' para que JPA pueda inyectar datos
 
     @Embedded
