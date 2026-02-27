@@ -1,4 +1,5 @@
 package com.uamishop.shared.domain;
+import jakarta.persistence.Embeddable;
 import java.math.BigDecimal;
 
 @Embeddable
