@@ -82,7 +82,7 @@ public class Carrito {
         }
     }
 
-    public void modificarCantidad(com.uamishop.catalogo.domain.ProductoId productoId, int nuevaCantidad) {
+    public void modificarCantidad(com.uamishop.shared.domain.ProductoId productoId, int nuevaCantidad) {
         validarModificable();
         // RN-VEN-05
         if (nuevaCantidad <= 0) {
@@ -100,7 +100,7 @@ public class Carrito {
         items.add(new ItemCarrito(item.getId(), item.getProductoRef(), nuevaCantidad, item.getPrecioUnitario()));
     }
 
-    public void eliminarProducto(com.uamishop.catalogo.domain.ProductoId productoId) {
+    public void eliminarProducto(com.uamishop.shared.domain.ProductoId productoId) {
         validarModificable(); // RN-VEN-07
         ItemCarrito item = buscarItem(productoId)
             .orElseThrow(() -> new IllegalArgumentException("El producto no existe en el carrito")); // RN-VEN-08
@@ -163,12 +163,12 @@ public class Carrito {
         }
     }
 
-    private boolean existeProducto(com.uamishop.catalogo.domain.ProductoId productoId) {
+    private boolean existeProducto(com.uamishop.shared.domain.ProductoId productoId) {
         return items.stream()
             .anyMatch(item -> item.getProductoRef().getProductoId().equals(productoId));
     }
 
-    private Optional<ItemCarrito> buscarItem(com.uamishop.catalogo.domain.ProductoId productoId) {
+    private Optional<ItemCarrito> buscarItem(com.uamishop.shared.domain.ProductoId productoId) {
         return items.stream()
             .filter(item -> item.getProductoRef().getProductoId().equals(productoId))
             .findFirst();
