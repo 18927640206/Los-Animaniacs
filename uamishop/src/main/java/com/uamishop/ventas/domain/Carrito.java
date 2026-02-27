@@ -20,7 +20,7 @@ public class Carrito {
     @Transient // Esta anotación le dice a JPA que NO guarde este campo
     private  CarritoId carritoId;
 
-    private final ClienteId clienteId;
+    private ClienteId clienteId;
     private EstadoCarrito estado;
     private final List<ItemCarrito> items;
     private DescuentoAplicado descuentoAplicado;
