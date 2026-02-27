@@ -3,17 +3,29 @@ package com.uamishop.ventas.domain;
 import com.uamishop.shared.domain.Money;
 import com.uamishop.shared.domain.ClienteId;
 
+import jakarta.persistence.*;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Entity
+@Table(name= "CARRITO")
 public class Carrito {
+    @Id
+    @Column(name = "id")
+    private String id;
+
+    @Transient // Esta anotación le dice a JPA que NO guarde este campo
     private final CarritoId id;
+
     private final ClienteId clienteId;
     private EstadoCarrito estado;
     private final List<ItemCarrito> items;
     private DescuentoAplicado descuentoAplicado;
+
+    protected Carrito() {}
 
     public Carrito(CarritoId id, ClienteId clienteId) {
         this.id = id;
@@ -149,6 +161,9 @@ public class Carrito {
     }
     
     // Getters
+    public CarritoId getId() { 
+        return carritoId; 
+    }
     public CarritoId getId() { return id; }
     public EstadoCarrito getEstado() { return estado; }
     public List<ItemCarrito> getItems() { return new ArrayList<>(items); }
