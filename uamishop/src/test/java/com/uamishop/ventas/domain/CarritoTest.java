@@ -11,9 +11,8 @@ class CarritoTest {
     
     @Test
     void testAgregarProducto() {
-        CarritoId cartId = new CarritoId("C1");
         ClienteId clientId = new ClienteId("CLI1");
-        Carrito carrito = new Carrito(cartId, clientId);
+        Carrito carrito = new Carrito("C1", clientId);
         
         ProductoRef producto = new ProductoRef(
             new ProductoId("P1"), "Laptop", "LAP-001"
@@ -28,9 +27,9 @@ class CarritoTest {
     
     @Test
     void testIniciarCheckout() {
-        CarritoId cartId = new CarritoId("C1");
+        
         ClienteId clientId = new ClienteId("CLI1");
-        Carrito carrito = new Carrito(cartId, clientId);
+        Carrito carrito = new Carrito("C1", clientId);
         
         ProductoRef producto = new ProductoRef(
             new ProductoId("P1"), "Laptop", "LAP-001"
