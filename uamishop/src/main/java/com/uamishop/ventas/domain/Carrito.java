@@ -40,7 +40,7 @@ public class Carrito {
     private DescuentoAplicado descuentoAplicado;
 
 
-    public Carrito(CarritoId id, ClienteId clienteId) {
+    public Carrito(String id, ClienteId clienteId) {
         this.id = id;
         this.clienteId = clienteId; 
         this.estado = EstadoCarrito.ACTIVO;
