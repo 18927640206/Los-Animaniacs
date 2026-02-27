@@ -20,7 +20,7 @@ import org.springframework.http.ResponseEntity;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT) // [cite: 798]
 class CategoriaControllerIntegrationTest {
 
-    private static final String BASE_URL = "/api/categorias";
+    private static final String BASE_URL = "/api/v1/categorias";
 
     @Autowired
     private TestRestTemplate restTemplate; // [cite: 802]
@@ -64,7 +64,7 @@ class CategoriaControllerIntegrationTest {
             // Valida que el GlobalExceptionHandler esté funcionando [cite: 726, 774]
             assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
             assertNotNull(response.getBody());
-            assertEquals("Validation Error", response.getBody().getError());
+            assertEquals("Bad Request", response.getBody().getError());
         }
     }
-}
+} 

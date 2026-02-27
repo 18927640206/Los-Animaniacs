@@ -4,6 +4,7 @@ import com.uamishop.shared.domain.Money;
 import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import com.uamishop.shared.domain.ProductoId;
+import com.uamishop.shared.domain.CategoriaId;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ProductoTest {
