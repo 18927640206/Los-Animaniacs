@@ -1,5 +1,26 @@
 package com.uamishop.catalogo.domain;
 
+import jakarta.persistence.Embeddable;
+
+@Embeddable // <--- ESTO ES LO QUE FALTA
+public class Imagen {
+    private String url;
+    private String descripcion;
+
+    protected Imagen() {} // Requerido por JPA
+
+    public Imagen(String url, String descripcion) {
+        this.url = url;
+        this.descripcion = descripcion;
+    }
+
+    // Getters
+    public String getUrl() { return url; }
+    public String getDescripcion() { return descripcion; }
+}
+
+/*package com.uamishop.catalogo.domain;
+
 public class Imagen {
 	private final String url;
     private final String textoAlternativo;
@@ -15,7 +36,7 @@ public class Imagen {
     }
     
     public String getUrl() { return url; }
-}
+}*/
 
 
 

@@ -32,11 +32,11 @@ public class Producto {
 
     @ElementCollection // Para guardar la lista de imágenes como una tabla secundaria
     @CollectionTable(name = "producto_imagenes", joinColumns = @JoinColumn(name = "producto_id"))
-    private List<Imagen> imagenes;
+    private List<Imagen> imagenes = new ArrayList<>();
 
     //JPA REQUIERE un constructor protegido o público sin argumentos
     protected Producto() {
-        this.imagenes = new ArrayList<>();
+        //this.imagenes = new ArrayList<>();
     }
 
     public Producto(ProductoId id, String nombre, String descripcion, 
