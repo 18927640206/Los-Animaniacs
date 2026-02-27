@@ -84,7 +84,7 @@ public class ProductoService {
         productoRepository.deleteById(new ProductoId(id.toString()));
     }
 
-    // Eh simplificado el mapeo para obtener el UUID real de los Value Objects
+    // He simplificado el mapeo para obtener el UUID real de los Value Objects
     private ProductoResponse mapearAResponse(Producto producto) {
         return new ProductoResponse(
             UUID.fromString(producto.getId().getId()),
