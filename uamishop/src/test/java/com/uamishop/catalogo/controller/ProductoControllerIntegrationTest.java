@@ -88,7 +88,7 @@ class ProductoControllerIntegrationTest {
             HttpEntity<ProductoRequest> request = new HttpEntity<>(requestBody);
 
             ResponseEntity<ApiError> response = restTemplate.exchange(
-                BASE_URL, HttpMethod.POST, request, ApiError.class);
+                PRODUCTOS_URL, HttpMethod.POST, request, ApiError.class);
 
             // Valida que el GlobalExceptionHandler detecte las violaciones de @Valid
             assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
