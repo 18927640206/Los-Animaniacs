@@ -46,13 +46,18 @@ class ProductoControllerIntegrationTest {
     void setUp() {
         // Crear una categoría válida antes de cada test
         CategoriaRequest catRequest = new CategoriaRequest();
-        catRequest.setNombre("Electronica");
-        catRequest.setDescripcion("Gadgets");
+        catRequest.setNombre("Categoria test");
+        catRequest.setDescripcion("description test");
         
         ResponseEntity<CategoriaResponse> catResponse = restTemplate.postForEntity(
-            CATEGORIAS_URL, catRequest, CategoriaResponse.class);
+        "/api/v1/categorias", catRequest, CategoriaResponse.class);
             
-        categoriaIdValido = catResponse.getBody().getId().toString();
+        assertEquals(HttpStatus.CREATED, catResponse.getStatusCode());
+        assertNotNull(catResponse.getBody());
+        assertNotNull(catResponse.getBody().getId());
+
+        //Guardar el ID
+        this.categoriaId = catResponse.getBody().getId();
     }
 
     @Nested
