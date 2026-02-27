@@ -17,10 +17,7 @@ public class Carrito {
     @Column(name = "id")
     private String id;
 
-    //@Transient
-    //private CarritoId carritoId;
-
-    // Ajuste: JPA necesita mapear clienteId si no es un tipo básico
+    
     @Embedded
     // --- CAMBIO AQUÍ: Forzar a que el ID del cliente sea cliente_id ---
     @AttributeOverrides({
@@ -42,17 +39,9 @@ public class Carrito {
     @Embedded
     private DescuentoAplicado descuentoAplicado;
 
-    /*@PostLoad
-    private void postLoad() {
-        if (this.id != null) {
-            this.carritoId = new CarritoId(this.id);
-        }
-    }*/
 
     public Carrito(CarritoId id, ClienteId clienteId) {
         this.id = id;
-        //this.carritoId = id;
-        //this.id = id.getId(); // Guardamos el String para JPA
         this.clienteId = clienteId; 
         this.estado = EstadoCarrito.ACTIVO;
         this.items = new ArrayList<>(); // Inicializamos para lógica de negocio

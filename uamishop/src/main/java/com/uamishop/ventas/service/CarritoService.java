@@ -1,7 +1,6 @@
 package com.uamishop.ventas.service;
 
 import com.uamishop.ventas.domain.Carrito;
-import com.uamishop.ventas.domain.CarritoId;
 import com.uamishop.ventas.domain.ProductoRef;
 import com.uamishop.shared.domain.ClienteId;
 import com.uamishop.shared.domain.Money;
@@ -21,9 +20,6 @@ public class CarritoService {
     }
 
     public Carrito crearCarrito(ClienteId clienteId) {
-        /*Carrito carrito = new Carrito(
-            new CarritoId(UUID.randomUUID().toString()),
-            clienteId);*/
         Carrito carrito = new Carrito(
             UUID.randomUUID().toString(),
             clienteId);
