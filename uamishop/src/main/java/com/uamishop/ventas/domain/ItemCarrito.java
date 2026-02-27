@@ -1,7 +1,9 @@
 package com.uamishop.ventas.domain;
 import com.uamishop.shared.domain.Money;
+import jakarta.persistence.Embeddable;
 import java.math.BigDecimal;
 
+@Embeddable
 public class ItemCarrito {
     private final ItemCarritoId id;
     private final ProductoRef productoRef;
