@@ -29,8 +29,8 @@ public class Carrito {
 
     public Carrito(CarritoId id, ClienteId clienteId) {
         this.carritoId = id;
-        this.id = id.getId();
-        this.clienteId = clienteId;
+        this.id = id.getId(); // Guardamos el String para JPA
+        this.clienteId = clienteId; 
         this.estado = EstadoCarrito.ACTIVO;
         this.items = new ArrayList<>();
         this.descuentoAplicado = null;
