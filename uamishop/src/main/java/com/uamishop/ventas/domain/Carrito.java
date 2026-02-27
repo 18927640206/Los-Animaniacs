@@ -1,19 +1,5 @@
 package com.uamishop.ventas.domain;
 
-import jakarta.persistence.Embeddable;
-import java.io.Serializable;
-
-@Embeddable
-public class CarritoId implements Serializable {
-    private String id;
-    
-    protected CarritoId() {} // Obligatorio para JPA
-    
-    public CarritoId(String id) { this.id = id; }
-    public String getId() { return id; }
-}
-/*package com.uamishop.ventas.domain;
-
 import com.uamishop.shared.domain.Money;
 import com.uamishop.shared.domain.ClienteId;
 
@@ -167,4 +153,4 @@ public class Carrito {
     public EstadoCarrito getEstado() { return estado; }
     public List<ItemCarrito> getItems() { return new ArrayList<>(items); }
     public DescuentoAplicado getDescuentoAplicado() { return descuentoAplicado; }
-}*/
+}

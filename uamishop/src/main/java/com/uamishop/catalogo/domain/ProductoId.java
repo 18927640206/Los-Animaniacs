@@ -1,4 +1,5 @@
 package com.uamishop.catalogo.domain;
+import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class ProductoId implements java.io.Serializable {
