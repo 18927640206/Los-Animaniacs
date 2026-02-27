@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/productos")
+@RequestMapping("/api/v1/productos")
 @Tag(name = "Productos", description = "Endpoints para gestión de productos en el catálogo")
 public class ProductoController {
 

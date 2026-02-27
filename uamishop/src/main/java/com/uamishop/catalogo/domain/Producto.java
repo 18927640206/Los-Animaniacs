@@ -1,6 +1,8 @@
 package com.uamishop.catalogo.domain;
 
 import com.uamishop.shared.domain.Money;
+import com.uamishop.shared.domain.ProductoId;
+import com.uamishop.shared.domain.CategoriaId;
 import jakarta.persistence.*; //importante para JPA
 import java.math.BigDecimal;
 import java.util.ArrayList;

@@ -1,9 +1,15 @@
-package com.uamishop.catalogo.domain;
+/*package com.uamishop.catalogo.domain;
 
 import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
+*/
 
+package com.uamishop.shared.domain; 
+
+import jakarta.persistence.Embeddable;
+import java.io.Serializable;
+import java.util.Objects;
 
 @Embeddable
 public class CategoriaId implements Serializable {
