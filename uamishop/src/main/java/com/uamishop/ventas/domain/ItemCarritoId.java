@@ -1,12 +1,15 @@
 package com.uamishop.ventas.domain;
 
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.Column;
 import java.io.Serializable;
 
 import java.util.Objects;
 
 @Embeddable 
 public class ItemCarritoId implements Serializable { 
+    
+    @Column(name = "item_id")
     private String id;
 
     // JPA necesita un constructor vacío
