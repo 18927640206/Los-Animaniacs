@@ -5,13 +5,13 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.AttributeOverride; 
 import jakarta.persistence.Column;
+import jakarta.persistence.AttributeOverrides;
 import java.math.BigDecimal;
 
 @Embeddable
 public class ItemCarrito {
     
-    @Embedded
-    @AttributeOverride(name = "id", column = @Column(name = "item_id"))
+    @Column(name = "item_id")
     private ItemCarritoId id;
 
     @Embedded
