@@ -18,21 +18,35 @@ public class Carrito {
     private String id;
 
     @Transient // Esta anotación le dice a JPA que NO guarde este campo
-    private  CarritoId carritoId;
+    private CarritoId carritoId;
 
+    // Ajuste: JPA necesita mapear clienteId si no es un tipo básico
+    @Embedded
     private ClienteId clienteId;
+
+    @Enumerated(EnumType.STRING) // Importante para persistir el Enum
     private EstadoCarrito estado;
-    private final List<ItemCarrito> items;
+
+    // CAMBIO AQUÍ: Mapeo de la colección para JPA
+    @ElementCollection(fetch = FetchType.EAGER) 
+    @CollectionTable(name = "CARRITO_ITEMS", joinColumns = @JoinColumn(name = "carrito_id"))
+    private List<ItemCarrito> items; // quitamos 'final' para que JPA pueda inyectar datos
+
+    @Embedded
     private DescuentoAplicado descuentoAplicado;
 
-    protected Carrito() {}
+    // Constructor vacío protegido para JPA
+    protected Carrito() {
+        // CAMBIO AQUÍ: Inicializar la lista para que JPA no falle
+        this.items = new ArrayList<>();
+    }
 
     public Carrito(CarritoId id, ClienteId clienteId) {
         this.carritoId = id;
         this.id = id.getId(); // Guardamos el String para JPA
         this.clienteId = clienteId; 
         this.estado = EstadoCarrito.ACTIVO;
-        this.items = new ArrayList<>();
+        this.items = new ArrayList<>(); // Inicializamos para lógica de negocio
         this.descuentoAplicado = null;
     }
 
