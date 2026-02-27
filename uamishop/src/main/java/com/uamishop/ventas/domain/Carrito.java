@@ -18,7 +18,7 @@ public class Carrito {
     private String id;
 
     @Transient // Esta anotación le dice a JPA que NO guarde este campo
-    private final CarritoId id;
+    private  CarritoId carritoId;
 
     private final ClienteId clienteId;
     private EstadoCarrito estado;
@@ -28,7 +28,8 @@ public class Carrito {
     protected Carrito() {}
 
     public Carrito(CarritoId id, ClienteId clienteId) {
-        this.id = id;
+        this.carritoId = id;
+        this.id = id.getId();
         this.clienteId = clienteId;
         this.estado = EstadoCarrito.ACTIVO;
         this.items = new ArrayList<>();
