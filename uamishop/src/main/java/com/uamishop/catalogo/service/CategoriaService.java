@@ -5,7 +5,9 @@ import com.uamishop.catalogo.controller.dto.CategoriaResponse;
 import com.uamishop.catalogo.controller.dto.ProductoResponse;
 import com.uamishop.catalogo.domain.Categoria;
 import com.uamishop.catalogo.domain.CategoriaId;
+import com.uamishop.catalogo.domain.Producto;
 import com.uamishop.catalogo.repository.CategoriaJpaRepository;
+import com.uamishop.catalogo.repository.ProductoJpaRepository;
 import com.uamishop.shared.exception.DomainException;
 import org.springframework.stereotype.Service;
 
