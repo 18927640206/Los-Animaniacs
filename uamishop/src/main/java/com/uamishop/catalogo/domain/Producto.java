@@ -1,17 +1,43 @@
 package com.uamishop.catalogo.domain;
+
 import com.uamishop.shared.domain.Money;
+import jakarta.persistence.*; //importante para JPA
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+
+@Enity
+@Table(name = "producto")
 public class Producto {
-    private final ProductoId id;
+
+   @EmbeddedId //Clave primaria compuesta/VO
+    private ProductoId id;
+
     private String nombre;
     private String descripcion;
+
+    @Embedded // El objeto Money se guardará en columnas monto y moneda
+    @AttributeOverrides({
+        @AttributeOverride(name = "monto", column = @Column(name = "precio_monto")),
+        @AttributeOverride(name = "moneda", column = @Column(name = "precio_moneda"))
+    })
     private Money precio;
-    private final CategoriaId categoriaId;
+
+    @Embedded
+    @AttributeOverride(name = "id", column = @Column(name = "categoria_id"))
+    private CategoriaId categoriaId;
+
     private boolean disponible;
-    private final List<Imagen> imagenes;
+
+    @ElementCollection // Para guardar la lista de imágenes como una tabla secundaria
+    @CollectionTable(name = "producto_imagenes", joinColumns = @JoinColumn(name = "producto_id"))
+    private List<Imagen> imagenes;
+
+    //JPA REQUIERE un constructor protegido o público sin argumentos
+    protected Producto() {
+        this.imagenes = new ArrayList<>();
+    }
 
     public Producto(ProductoId id, String nombre, String descripcion, 
                    Money precio, CategoriaId categoriaId) {
@@ -91,4 +117,5 @@ public class Producto {
     public boolean isDisponible() { return disponible; }
     public List<Imagen> getImagenes() { return new ArrayList<>(imagenes); }
     public String getDescripcion() { return descripcion; }
+    public CategoriaId getCategoriaId() { return categoriaId; }
 }

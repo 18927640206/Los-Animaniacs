@@ -1,9 +1,11 @@
 package com.uamishop.shared.domain;
 import java.math.BigDecimal;
 
+@Embeddable
 public class Money {
      private final BigDecimal monto;
      private final String moneda;
+     protected Money() {} // Constructor vacío
 
      public Money(BigDecimal monto, String moneda) {
          if (monto.compareTo(BigDecimal.ZERO) < 0) {
