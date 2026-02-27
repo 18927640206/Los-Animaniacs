@@ -30,7 +30,8 @@ import java.math.BigDecimal;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ProductoControllerIntegrationTest {
 
-    private static final String BASE_URL = "/api/productos";
+    private static final String PRODUCTOS_URL = "/api/productos";
+    private static final String CATEGORIAS_URL = "/api/categorias";
 
     @Autowired
     private TestRestTemplate restTemplate;
