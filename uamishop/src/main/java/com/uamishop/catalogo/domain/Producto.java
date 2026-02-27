@@ -65,6 +65,29 @@ public class Producto {
         this.imagenes = new ArrayList<>();
     }
 
+    public void actualizarInformacion(String nuevoNombre, String nuevaDescripcion, Money nuevoPrecio, CategoriaId nuevaCategoria) {
+        // RN-CAT-01
+        if (nombre.length() < 3 || nombre.length() > 100) {
+            throw new IllegalArgumentException("Nombre inválido");
+        }
+        
+        // RN-CAT-02
+        if (precio.getMonto().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Precio debe ser > 0");
+        }
+
+        // RN-CAT-03
+        if (descripcion != null && descripcion.length() > 500) {
+            throw new IllegalArgumentException("La descripción no puede exceder 500 caracteres");
+        }
+
+        this.nombre = nuevoNombre;
+        this.descripcion = nuevaDescripcion;
+        this.categoriaId = nuevaCategoria;
+
+        this.cambiarPrecio(nuevoPrecio);
+    }
+
     public void cambiarPrecio(Money nuevoPrecio) {
         // RN-CAT-04
         if (nuevoPrecio.getMonto().compareTo(BigDecimal.ZERO) < 0) {

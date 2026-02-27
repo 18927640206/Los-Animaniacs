@@ -46,10 +46,14 @@ public class ProductoService {
         Producto producto = productoRepository.findById(new ProductoId(id.toString()))
             .orElseThrow(() -> new DomainException("Producto no encontrado"));
 
-        if (request.getPrecio() != null) {
-            producto.cambiarPrecio(new Money(request.getPrecio(), "MXN"));
-        }
-        
+       //Llamar a actualizarInformacion en lugar de cambiarPrecio ---
+        producto.actualizarInformacion(
+            request.getNombre(),
+            request.getDescripcion(),
+            new Money(request.getPrecio(), "MXN"),
+            new CategoriaId(request.getCategoriaId())
+        );
+            
         productoRepository.save(producto);
         return mapearAResponse(producto);
     }
