@@ -22,6 +22,10 @@ public class Carrito {
 
     // Ajuste: JPA necesita mapear clienteId si no es un tipo básico
     @Embedded
+    // --- CAMBIO AQUÍ: Forzar a que el ID del cliente sea cliente_id ---
+    @AttributeOverrides({
+        @AttributeOverride(name = "id", column = @Column(name = "cliente_id"))
+    })
     private ClienteId clienteId;
 
     @Enumerated(EnumType.STRING) // Importante para persistir el Enum
