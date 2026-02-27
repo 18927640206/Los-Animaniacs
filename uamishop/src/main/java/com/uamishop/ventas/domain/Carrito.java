@@ -17,7 +17,7 @@ public class Carrito {
     @Column(name = "id")
     private String id;
 
-    //@Transient // Esta anotación le dice a JPA que NO guarde este campo
+    //@Transient
     //private CarritoId carritoId;
 
     // Ajuste: JPA necesita mapear clienteId si no es un tipo básico
@@ -42,19 +42,12 @@ public class Carrito {
     @Embedded
     private DescuentoAplicado descuentoAplicado;
 
-    @PostLoad
+    /*@PostLoad
     private void postLoad() {
         if (this.id != null) {
             this.carritoId = new CarritoId(this.id);
         }
-    }
-
-
-    // Constructor vacío protegido para JPA
-    protected Carrito() {
-        // CAMBIO AQUÍ: Inicializar la lista para que JPA no falle
-        this.items = new ArrayList<>();
-    }
+    }*/
 
     public Carrito(CarritoId id, ClienteId clienteId) {
         this.id = id;
@@ -64,6 +57,12 @@ public class Carrito {
         this.estado = EstadoCarrito.ACTIVO;
         this.items = new ArrayList<>(); // Inicializamos para lógica de negocio
         this.descuentoAplicado = null;
+    }
+
+    // Constructor vacío protegido para JPA
+    protected Carrito() {
+        // CAMBIO AQUÍ: Inicializar la lista para que JPA no falle
+        this.items = new ArrayList<>();
     }
 
     public void agregarProducto(ProductoRef productoRef, int cantidad, Money precio) {
