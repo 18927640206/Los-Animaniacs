@@ -42,6 +42,14 @@ public class Carrito {
     @Embedded
     private DescuentoAplicado descuentoAplicado;
 
+    @PostLoad
+    private void postLoad() {
+        if (this.id != null) {
+            this.carritoId = new CarritoId(this.id);
+        }
+    }
+
+
     // Constructor vacío protegido para JPA
     protected Carrito() {
         // CAMBIO AQUÍ: Inicializar la lista para que JPA no falle
