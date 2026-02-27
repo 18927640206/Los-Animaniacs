@@ -4,7 +4,8 @@ import com.uamishop.ventas.domain.Carrito;
 import com.uamishop.ventas.domain.ProductoRef;
 import com.uamishop.shared.domain.ClienteId;
 import com.uamishop.shared.domain.Money;
-import com.uamishop.catalogo.domain.ProductoId;
+import com.uamishop.shared.domain.ProductoId;
+//import com.uamishop.catalogo.domain.ProductoId;
 import com.uamishop.ventas.repository.CarritoJpaRepository;
 import org.springframework.stereotype.Service;
 

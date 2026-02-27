@@ -1,5 +1,6 @@
 package com.uamishop.catalogo.domain;
 
+import com.uamishop.shared.domain.CategoriaId;
 import jakarta.persistence.*;
 
 @Entity

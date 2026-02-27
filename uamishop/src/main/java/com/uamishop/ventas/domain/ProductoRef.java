@@ -1,6 +1,7 @@
 package com.uamishop.ventas.domain;
 
-import com.uamishop.catalogo.domain.ProductoId;
+import com.uamishop.shared.domain.ProductoId;
+//import com.uamishop.catalogo.domain.ProductoId;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
 import java.io.Serializable;

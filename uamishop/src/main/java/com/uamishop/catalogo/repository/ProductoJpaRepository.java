@@ -1,8 +1,10 @@
 package com.uamishop.catalogo.repository;
 
 import com.uamishop.catalogo.domain.Producto;
-import com.uamishop.catalogo.domain.ProductoId;
-import com.uamishop.catalogo.domain.CategoriaId; // Importa esto
+//import com.uamishop.catalogo.domain.ProductoId;
+import com.uamishop.shared.domain.ProductoId;
+import com.uamishop.shared.domain.CategoriaId;
+//import com.uamishop.catalogo.domain.CategoriaId; 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

@@ -2,6 +2,7 @@ package com.uamishop.ventas.domain;
 
 import com.uamishop.shared.domain.Money;
 import com.uamishop.shared.domain.ClienteId;
+import com.uamishop.shared.domain.ProductoId;
 
 import jakarta.persistence.*;
 
