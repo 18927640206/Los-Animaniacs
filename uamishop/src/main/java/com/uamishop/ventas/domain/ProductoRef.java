@@ -1,10 +1,21 @@
 package com.uamishop.ventas.domain;
-import com.uamishop.catalogo.domain.ProductoId;
 
-public class ProductoRef {
-	    private final ProductoId productoId;
-	    private final String nombre;
-	    private final String sku;
+import com.uamishop.catalogo.domain.ProductoId;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Embedded;
+import java.io.Serializable;
+
+@Embeddable
+public class ProductoRef implements Serializable {
+	    
+		@Embedded
+		private ProductoId productoId;
+	    
+		private  String nombre;
+	    private String sku;
+
+		// Constructor vacío para JPA
+    	protected ProductoRef() {}
 
 	    public ProductoRef(ProductoId productoId, String nombre, String sku) {
 	        // RN-VO-05

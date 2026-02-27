@@ -7,11 +7,18 @@ import java.math.BigDecimal;
 @Embeddable
 public class ItemCarrito {
     
+    @Embedded
     private ItemCarritoId id;
 
-    private final ProductoRef productoRef;
+    @Embedded
+    private ProductoRef productoRef;
+
     private int cantidad;
-    private final Money precioUnitario;
+
+    @Embedded // JPA necesita que no sea final para que pueda llenarse
+    private  Money precioUnitario;
+
+    protected ItemCarrito() {}
 
     public ItemCarrito(ItemCarritoId id, ProductoRef productoRef, int cantidad, Money precioUnitario) {
         // RN-VEN-01
