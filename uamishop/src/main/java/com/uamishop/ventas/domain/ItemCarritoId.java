@@ -1,13 +1,14 @@
 package com.uamishop.ventas.domain;
 
-import jakarta.persistence.Embeddable; // 1. Importa esto
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Embedded;
 import java.io.Serializable;
 
-@Embeddable // 2. Añade esta anotación
-public class ItemCarritoId implements Serializable { // 3. Implementa Serializable
+@Embeddable 
+public class ItemCarritoId implements Serializable { 
     private String id;
 
-    // 4. JPA necesita un constructor vacío
+    // JPA necesita un constructor vacío
     protected ItemCarritoId() {}
 
     public ItemCarritoId(String id) { 
