@@ -3,6 +3,7 @@ package com.uamishop.catalogo.domain;
 import com.uamishop.shared.domain.Money;
 import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
+import com.uamishop.shared.domain.ProductoId;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ProductoTest {
