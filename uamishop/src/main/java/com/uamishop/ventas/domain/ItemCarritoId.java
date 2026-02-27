@@ -18,11 +18,18 @@ public class ItemCarritoId implements Serializable { // 3. Implementa Serializab
         return id; 
     }
     
-    // 5. Es buena práctica implementar equals y hashCode
     @Override
-    public boolean equals(Object o) { ... }                
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ItemCarritoId that = (ItemCarritoId) o;
+        return Objects.equals(id, that.id);
+    }
+
     @Override
-    public int hashCode() { ... }
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
 
 
