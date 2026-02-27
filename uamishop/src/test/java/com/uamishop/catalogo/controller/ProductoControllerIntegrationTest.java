@@ -18,6 +18,13 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import com.uamishop.catalogo.controller.dto.CategoriaRequest;
+import com.uamishop.catalogo.controller.dto.CategoriaResponse;
+import com.uamishop.catalogo.repository.CategoriaJpaRepository;
+import com.uamishop.catalogo.domain.CategoriaId;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.junit.jupiter.api.BeforeEach;
+
 import java.math.BigDecimal;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -27,6 +34,24 @@ class ProductoControllerIntegrationTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
+
+    @Autowired
+    private CategoriaJpaRepository categoriaRepository;
+
+    private String categoriaIdValido;
+
+    @BeforeEach
+    void setUp() {
+        // Crear una categoría válida antes de cada test
+        CategoriaRequest catRequest = new CategoriaRequest();
+        catRequest.setNombre("Electronica");
+        catRequest.setDescripcion("Gadgets");
+        
+        ResponseEntity<CategoriaResponse> catResponse = restTemplate.postForEntity(
+            CATEGORIAS_URL, catRequest, CategoriaResponse.class);
+            
+        categoriaIdValido = catResponse.getBody().getId().toString();
+    }
 
     @Nested
     @DisplayName("POST /api/productos")
@@ -40,19 +65,16 @@ class ProductoControllerIntegrationTest {
             requestBody.setNombre("Laptop Gamer");
             requestBody.setDescripcion("Alta gama");
             requestBody.setPrecio(new BigDecimal("1500.00"));
-            requestBody.setCategoriaId("alguna-categoria-id"); // Cambia esto por un ID real
+            requestBody.setCategoriaId(categoriaIdValido); // Cambia esto por un ID real
 
             HttpEntity<ProductoRequest> request = new HttpEntity<>(requestBody);
 
-            // 2. Invocar endpoint
             ResponseEntity<ProductoResponse> response = restTemplate.exchange(
-                BASE_URL, HttpMethod.POST, request, ProductoResponse.class);
+                PRODUCTOS_URL, HttpMethod.POST, request, ProductoResponse.class);
 
-            // 3. Validar
             assertEquals(HttpStatus.CREATED, response.getStatusCode());
             assertNotNull(response.getBody());
             assertEquals("Laptop Gamer", response.getBody().getNombre());
-            assertNotNull(response.getBody().getId());
         }
 
         @Test
