@@ -26,6 +26,7 @@ public class ProductoService {
     }
 
     public ProductoResponse crear(ProductoRequest request) {
+        // Convertimos el String del Request al Value Object CategoriaId
         CategoriaId catId = new CategoriaId(request.getCategoriaId());
         
         Producto producto = new Producto(
@@ -35,56 +36,62 @@ public class ProductoService {
             new Money(request.getPrecio(), "MXN"),
             catId
         );
+        
         productoRepository.save(producto);
-        return mapearAResponse(producto, UUID.fromString(request.getCategoriaId()));
+        return mapearAResponse(producto);
     }
 
     public ProductoResponse actualizar(UUID id, ProductoRequest request) {
-        Producto producto = productoRepository.findById(id)
+        // Buscamos usando el Value Object ProductoId en lugar del UUID directamente
+        Producto producto = productoRepository.findById(new ProductoId(id.toString()))
             .orElseThrow(() -> new DomainException("Producto no encontrado"));
 
         if (request.getPrecio() != null) {
             producto.cambiarPrecio(new Money(request.getPrecio(), "MXN"));
         }
+        
         productoRepository.save(producto);
-        return mapearAResponse(producto, UUID.fromString(request.getCategoriaId()));
+        return mapearAResponse(producto);
     }
 
     public List<ProductoResponse> listarTodos() {
         return productoRepository.findAll().stream()
-                .map(p -> mapearAResponse(p, UUID.randomUUID())) // Ajustar UUID real
+                .map(this::mapearAResponse)
                 .collect(Collectors.toList());
     }
 
     public ProductoResponse buscarPorId(UUID id) {
-        Producto producto = productoRepository.findById(id)
+        Producto producto = productoRepository.findById(new ProductoId(id.toString()))
             .orElseThrow(() -> new DomainException("Producto no encontrado"));
-        return mapearAResponse(producto, UUID.randomUUID()); // Ajustar UUID real
+        return mapearAResponse(producto);
     }
 
     public void activar(UUID id) {
-        Producto producto = productoRepository.findById(id).orElseThrow();
+        Producto producto = productoRepository.findById(new ProductoId(id.toString()))
+                .orElseThrow(() -> new DomainException("Producto no encontrado"));
         producto.activar();
         productoRepository.save(producto);
     }
 
     public void desactivar(UUID id) {
-        Producto producto = productoRepository.findById(id).orElseThrow();
+        Producto producto = productoRepository.findById(new ProductoId(id.toString()))
+                .orElseThrow(() -> new DomainException("Producto no encontrado"));
         producto.desactivar();
         productoRepository.save(producto);
     }
 
     public void eliminar(UUID id) {
-        productoRepository.deleteById(id);
+        productoRepository.deleteById(new ProductoId(id.toString()));
     }
 
-    private ProductoResponse mapearAResponse(Producto producto, UUID categoriaId) {
+    // Eh simplificado el mapeo para obtener el UUID real de los Value Objects
+    private ProductoResponse mapearAResponse(Producto producto) {
         return new ProductoResponse(
             UUID.fromString(producto.getId().getId()),
             producto.getNombre(),
-            producto.getDescripcion(), // Necesitas agregar getDescripcion() en Producto.java
+            producto.getDescripcion(),
             producto.getPrecio().getMonto(),
-            categoriaId,
+            UUID.fromString(producto.getCategoriaId().getId()),
             producto.isDisponible() ? "ACTIVO" : "INACTIVO"
         );
     }
