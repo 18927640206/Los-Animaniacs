@@ -1,7 +1,6 @@
 package com.uamishop.ventas.domain;
 
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.Embedded;
 import java.io.Serializable;
 
 @Embeddable 

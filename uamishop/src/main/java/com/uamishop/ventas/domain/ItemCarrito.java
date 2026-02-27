@@ -1,13 +1,14 @@
 package com.uamishop.ventas.domain;
 import com.uamishop.shared.domain.Money;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.Embedded;
 import java.math.BigDecimal;
 
 @Embeddable
 public class ItemCarrito {
     @Embedded
     private final ItemCarritoId id;
-    
+
     private final ProductoRef productoRef;
     private int cantidad;
     private final Money precioUnitario;
