@@ -31,8 +31,8 @@ import java.math.BigDecimal;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ProductoControllerIntegrationTest {
 
-    private static final String PRODUCTOS_URL = "/api/productos";
-    private static final String CATEGORIAS_URL = "/api/categorias";
+    private static final String PRODUCTOS_URL = "/api/v1/productos";
+    private static final String CATEGORIAS_URL = "/api/v1/categorias";
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -57,7 +57,7 @@ class ProductoControllerIntegrationTest {
         assertNotNull(catResponse.getBody().getId());
 
         //Guardar el ID
-        this.categoriaId = catResponse.getBody().getId();
+        this.categoriaIdValido = catResponse.getBody().getId().toString();
     }
 
     @Nested
