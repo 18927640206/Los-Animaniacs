@@ -6,8 +6,8 @@ import java.math.BigDecimal;
 
 @Embeddable
 public class ItemCarrito {
-    @Embedded
-    private final ItemCarritoId id;
+    
+    private ItemCarritoId id;
 
     private final ProductoRef productoRef;
     private int cantidad;

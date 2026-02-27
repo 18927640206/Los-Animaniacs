@@ -3,6 +3,8 @@ package com.uamishop.ventas.domain;
 import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 
+import java.util.Objects
+
 @Embeddable 
 public class ItemCarritoId implements Serializable { 
     private String id;
