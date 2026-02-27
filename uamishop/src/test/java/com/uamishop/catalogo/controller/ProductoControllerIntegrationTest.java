@@ -21,7 +21,8 @@ import org.springframework.http.ResponseEntity;
 import com.uamishop.catalogo.controller.dto.CategoriaRequest;
 import com.uamishop.catalogo.controller.dto.CategoriaResponse;
 import com.uamishop.catalogo.repository.CategoriaJpaRepository;
-import com.uamishop.catalogo.domain.CategoriaId;
+//import com.uamishop.catalogo.domain.CategoriaId;
+import com.uamishop.shared.domain.CategoriaId;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.junit.jupiter.api.BeforeEach;
 
