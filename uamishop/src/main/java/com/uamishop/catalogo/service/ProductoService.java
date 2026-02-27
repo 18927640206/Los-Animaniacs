@@ -90,13 +90,22 @@ public class ProductoService {
 
     // He simplificado el mapeo para obtener el UUID real de los Value Objects
     private ProductoResponse mapearAResponse(Producto producto) {
-        return new ProductoResponse(
-            UUID.fromString(producto.getId().getId()),
-            producto.getNombre(),
-            producto.getDescripcion(),
-            producto.getPrecio().getMonto(),
-            UUID.fromString(producto.getCategoriaId().getId()),
-            producto.isDisponible() ? "ACTIVO" : "INACTIVO"
-        );
+        try {
+            // Log para ver qué producto se está mapeando
+            System.out.println("Mapeando producto ID: " + producto.getId().getId());
+            
+            return new ProductoResponse(
+                UUID.fromString(producto.getId().getId()), // Esto podría fallar si el ID no es un UUID válido
+                producto.getNombre(),
+                producto.getDescripcion(),
+                producto.getPrecio().getMonto(), // Esto falla si getPrecio() es null
+                UUID.fromString(producto.getCategoriaId().getId()), // Esto podría fallar
+                producto.isDisponible() ? "ACTIVO" : "INACTIVO"
+            );
+        } catch (Exception e) {
+            System.err.println("!!! ERROR Mapeando producto: " + producto.getId().getId());
+            e.printStackTrace();
+            throw e;
+        }
     }
 }
