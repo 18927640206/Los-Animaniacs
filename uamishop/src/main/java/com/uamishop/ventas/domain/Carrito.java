@@ -162,10 +162,7 @@ public class Carrito {
     }
     
     // Getters
-    public CarritoId getId() { 
-        return carritoId; 
-    }
-    public CarritoId getId() { return id; }
+    public CarritoId getId() { return carritoId; }
     public EstadoCarrito getEstado() { return estado; }
     public List<ItemCarrito> getItems() { return new ArrayList<>(items); }
     public DescuentoAplicado getDescuentoAplicado() { return descuentoAplicado; }
