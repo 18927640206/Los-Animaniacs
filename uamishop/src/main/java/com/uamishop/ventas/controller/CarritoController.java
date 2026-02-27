@@ -31,7 +31,8 @@ public class CarritoController {
     public ResponseEntity<Carrito> crear(@Valid @RequestBody CrearCarritoRequest request) {
         ClienteId clienteId = new ClienteId(request.getClienteId());
         Carrito carrito = carritoService.crearCarrito(clienteId);
-        return ResponseEntity.created(URI.create("/api/carritos/" + carrito.getId().getId())).body(carrito);
+
+        return ResponseEntity.created(URI.create("/api/carritos/" + carrito.getId())).body(carrito);
     }
 
     @GetMapping("/{id}")

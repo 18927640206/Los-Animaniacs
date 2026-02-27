@@ -21,13 +21,16 @@ public class CarritoService {
     }
 
     public Carrito crearCarrito(ClienteId clienteId) {
-        Carrito carrito = new Carrito(
+        /*Carrito carrito = new Carrito(
             new CarritoId(UUID.randomUUID().toString()),
+            clienteId);*/
+        Carrito carrito = new Carrito(
+            UUID.randomUUID().toString(),
             clienteId);
         return carritoRepository.save(carrito);
     }
 
-    // CAMBIO 1: Convertimos UUID a String en findById
+    // Convertimos UUID a String en findById
     public Carrito obtenerCarrito(UUID carritoId) {
         return carritoRepository.findById(carritoId.toString()) // .toString() aquí
             .orElseThrow(() -> new RuntimeException("Carrito no encontrado"));

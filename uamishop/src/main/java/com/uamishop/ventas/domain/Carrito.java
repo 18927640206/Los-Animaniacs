@@ -17,8 +17,8 @@ public class Carrito {
     @Column(name = "id")
     private String id;
 
-    @Transient // Esta anotación le dice a JPA que NO guarde este campo
-    private CarritoId carritoId;
+    //@Transient // Esta anotación le dice a JPA que NO guarde este campo
+    //private CarritoId carritoId;
 
     // Ajuste: JPA necesita mapear clienteId si no es un tipo básico
     @Embedded
@@ -57,8 +57,9 @@ public class Carrito {
     }
 
     public Carrito(CarritoId id, ClienteId clienteId) {
-        this.carritoId = id;
-        this.id = id.getId(); // Guardamos el String para JPA
+        this.id = id;
+        //this.carritoId = id;
+        //this.id = id.getId(); // Guardamos el String para JPA
         this.clienteId = clienteId; 
         this.estado = EstadoCarrito.ACTIVO;
         this.items = new ArrayList<>(); // Inicializamos para lógica de negocio
@@ -191,7 +192,8 @@ public class Carrito {
     }
     
     // Getters
-    public CarritoId getId() { return carritoId; }
+    //public CarritoId getId() { return carritoId; }
+    public String getId() { return id; }
     public EstadoCarrito getEstado() { return estado; }
     public List<ItemCarrito> getItems() { return new ArrayList<>(items); }
     public DescuentoAplicado getDescuentoAplicado() { return descuentoAplicado; }
