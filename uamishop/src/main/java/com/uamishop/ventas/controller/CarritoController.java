@@ -19,7 +19,7 @@ import java.net.URI;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/carritos")
+@RequestMapping("/api/v2/carritos")
 public class CarritoController {
 
     private final CarritoService carritoService;

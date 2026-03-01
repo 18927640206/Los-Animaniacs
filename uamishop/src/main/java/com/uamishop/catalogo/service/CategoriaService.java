@@ -11,6 +11,7 @@ import com.uamishop.catalogo.repository.CategoriaJpaRepository;
 import com.uamishop.catalogo.repository.ProductoJpaRepository;
 import com.uamishop.shared.exception.DomainException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,7 @@ public class CategoriaService {
         this.productoRepository = productoRepository;
     }
 
+    @Transactional
     public CategoriaResponse crear(CategoriaRequest request) {
         Categoria categoria = new Categoria(
                 new CategoriaId(UUID.randomUUID().toString()),
@@ -45,6 +47,7 @@ public class CategoriaService {
         return mapearAResponse(categoria);
     }
 
+    @Transactional
     public CategoriaResponse actualizar(UUID id, CategoriaRequest request) {
         //Aqui tambien se justa lo del UUID
         CategoriaId catId = new CategoriaId(id.toString());
@@ -60,6 +63,7 @@ public class CategoriaService {
     }
 
     //Aqui habia un error porque pasaba un 'java.util.UUID'
+    @Transactional
     public CategoriaResponse buscarPorId(UUID id) {
         //Convertimos el UUID a nuestro value Object del dominio
         CategoriaId catId = new CategoriaId(id.toString());
@@ -71,6 +75,7 @@ public class CategoriaService {
         return mapearAResponse(categoria);
     }
 
+    @Transactional
     public List<ProductoResponse> obtenerProductos(UUID id) {
         // 3. Implementa la lógica
         List<Producto> productos = productoRepository.findByCategoriaIdRaw(id.toString());
@@ -81,6 +86,7 @@ public class CategoriaService {
             .collect(Collectors.toList());
     }
 
+    @Transactional
     public List<CategoriaResponse> obtenerTodas() {
         // Buscamos todas en la BD y las transformamos a Response (DTO)
         return categoriaRepository.findAll().stream()
@@ -88,6 +94,7 @@ public class CategoriaService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void eliminar(UUID id) {
         categoriaRepository.deleteById(new CategoriaId(id.toString()));
     }

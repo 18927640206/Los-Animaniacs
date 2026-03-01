@@ -1,5 +1,7 @@
 package com.uamishop.catalogo.service;
 
+import com.uamishop.catalogo.api.CatalogoApi;
+import com.uamishop.catalogo.api.ProductoDetalle;
 import com.uamishop.catalogo.controller.dto.ProductoRequest;
 import com.uamishop.catalogo.controller.dto.ProductoResponse;
 import com.uamishop.catalogo.domain.*;
@@ -11,14 +13,16 @@ import com.uamishop.shared.domain.CategoriaId;
 import com.uamishop.shared.domain.Money;
 import com.uamishop.shared.exception.DomainException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
-public class ProductoService {
+public class ProductoService implements CatalogoApi {
 
     private final ProductoJpaRepository productoRepository;
     private final CategoriaJpaRepository categoriaRepository;
@@ -28,6 +32,27 @@ public class ProductoService {
         this.categoriaRepository = categoriaRepository;
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<ProductoDetalle> obtenerDetalleProducto(UUID productoId) {
+        return productoRepository.findById(new ProductoId(productoId.toString()))
+            .map(p -> new ProductoDetalle(
+                UUID.fromString(p.getId().getId()),
+                p.getNombre(),
+                p.getPrecio().getMonto(),
+                p.isDisponible()
+            ));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean hayStockDisponible(UUID productoId, int cantidad) {
+        // validamos solo si el producto existe y está disponible
+        return productoRepository.findById(new ProductoId(productoId.toString()))
+            .map(Producto::isDisponible).orElse(false);
+    }
+
+    @Transactional
     public ProductoResponse crear(ProductoRequest request) {
         // Convertimos el String del Request al Value Object CategoriaId
         CategoriaId catId = new CategoriaId(request.getCategoriaId());
@@ -44,6 +69,7 @@ public class ProductoService {
         return mapearAResponse(producto);
     }
 
+    @Transactional
     public ProductoResponse actualizar(UUID id, ProductoRequest request) {
         // Buscamos usando el Value Object ProductoId en lugar del UUID directamente
         Producto producto = productoRepository.findById(new ProductoId(id.toString()))
@@ -61,18 +87,21 @@ public class ProductoService {
         return mapearAResponse(producto);
     }
 
+    @Transactional
     public List<ProductoResponse> listarTodos() {
         return productoRepository.findAll().stream()
                 .map(this::mapearAResponse)
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public ProductoResponse buscarPorId(UUID id) {
         Producto producto = productoRepository.findById(new ProductoId(id.toString()))
             .orElseThrow(() -> new DomainException("Producto no encontrado"));
         return mapearAResponse(producto);
     }
 
+    @Transactional
     public void activar(UUID id) {
         Producto producto = productoRepository.findById(new ProductoId(id.toString()))
                 .orElseThrow(() -> new DomainException("Producto no encontrado"));
@@ -80,6 +109,7 @@ public class ProductoService {
         productoRepository.save(producto);
     }
 
+    @Transactional
     public void desactivar(UUID id) {
         Producto producto = productoRepository.findById(new ProductoId(id.toString()))
                 .orElseThrow(() -> new DomainException("Producto no encontrado"));
@@ -87,6 +117,7 @@ public class ProductoService {
         productoRepository.save(producto);
     }
 
+    @Transactional
     public void eliminar(UUID id) {
         productoRepository.deleteById(new ProductoId(id.toString()));
     }

@@ -182,6 +182,7 @@ public class Carrito {
     
     // Getters
     //public CarritoId getId() { return carritoId; }
+    public ClienteId getClienteId() { return clienteId; }
     public String getId() { return id; }
     public EstadoCarrito getEstado() { return estado; }
     public List<ItemCarrito> getItems() { return new ArrayList<>(items); }
