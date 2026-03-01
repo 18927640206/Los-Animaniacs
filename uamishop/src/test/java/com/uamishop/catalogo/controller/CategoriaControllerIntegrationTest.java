@@ -20,13 +20,13 @@ import org.springframework.http.ResponseEntity;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT) // [cite: 798]
 class CategoriaControllerIntegrationTest {
 
-    private static final String BASE_URL = "/api/v1/categorias";
+    private static final String BASE_URL = "/api/v2/categorias";
 
     @Autowired
     private TestRestTemplate restTemplate; // [cite: 802]
 
     @Nested
-    @DisplayName("POST /api/categorias") // [cite: 812, 813]
+    @DisplayName("POST /api/v2/categorias") // [cite: 812, 813]
     class CrearCategoria {
 
         @Test

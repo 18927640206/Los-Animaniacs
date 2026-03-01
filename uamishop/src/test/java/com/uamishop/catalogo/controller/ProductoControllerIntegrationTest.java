@@ -31,8 +31,8 @@ import java.math.BigDecimal;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ProductoControllerIntegrationTest {
 
-    private static final String PRODUCTOS_URL = "/api/v1/productos";
-    private static final String CATEGORIAS_URL = "/api/v1/categorias";
+    private static final String PRODUCTOS_URL = "/api/v2/productos";
+    private static final String CATEGORIAS_URL = "/api/v2/categorias";
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -50,7 +50,7 @@ class ProductoControllerIntegrationTest {
         catRequest.setDescripcion("description test");
         
         ResponseEntity<CategoriaResponse> catResponse = restTemplate.postForEntity(
-        "/api/v1/categorias", catRequest, CategoriaResponse.class);
+        "/api/v2/categorias", catRequest, CategoriaResponse.class);
             
         assertEquals(HttpStatus.CREATED, catResponse.getStatusCode());
         assertNotNull(catResponse.getBody());
@@ -61,7 +61,7 @@ class ProductoControllerIntegrationTest {
     }
 
     @Nested
-    @DisplayName("POST /api/productos")
+    @DisplayName("POST /api/v2/productos")
     class CrearProducto {
 
         @Test
