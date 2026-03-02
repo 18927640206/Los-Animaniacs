@@ -6,18 +6,21 @@ import com.uamishop.ordenes.domain.*;
 import com.uamishop.ordenes.controller.dto.CrearOrdenRequest;
 import com.uamishop.ordenes.repository.OrdenJpaRepository;
 import com.uamishop.ventas.api.VentasApi;
+import com.uamishop.ventas.api.CarritoResumen;
+import com.uamishop.ventas.domain.ProductoRef;
 import com.uamishop.shared.domain.ClienteId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-public class OrdenService implements OrdenApi{
+public class OrdenService implements OrdenApi {
 
     private final OrdenJpaRepository ordenRepository;
-    private final VentasApi ventasApi;
+    private final VentasApi ventasApi; // Comunicación inter-módulo vía interfaz
 
     public OrdenService(OrdenJpaRepository ordenRepository, VentasApi ventasApi) {
         this.ordenRepository = ordenRepository;
@@ -29,16 +32,46 @@ public class OrdenService implements OrdenApi{
     public OrdenResumen obtenerResumen(UUID id) {
         Orden orden = buscarPorId(id);
         return new OrdenResumen(
-            UUID.fromString(orden.getId().toString()),
+            UUID.fromString(orden.getId().getId()), 
             orden.getEstado().toString(),
             orden.calcularTotal().getMonto()
         );
     }
 
+    // Método solicitado por la Práctica 5: Crear orden desde el flujo de Ventas
+    @Transactional
+    public Orden crearDesdeCarrito(UUID carritoId, DireccionEnvio direccion) {
+        // 1. Obtenemos los datos del carrito de forma segura vía API pública
+        CarritoResumen carrito = ventasApi.obtenerResumen(carritoId);
+
+        // 2. Transformamos los ítems del carrito a ítems de la orden (Preservamos datos históricos)
+        List<ItemOrden> itemsOrden = carrito.items().stream()
+            .map(item -> new ItemOrden(
+                new ItemOrdenId(UUID.randomUUID().toString()),
+                new ProductoRef(item.productoId(), item.nombreProducto(), item.sku()),
+                item.cantidad(),
+                item.precioUnitario()
+            ))
+            .collect(Collectors.toList());
+
+        // 3. Creamos y persistimos la nueva orden
+        Orden orden = new Orden(
+            new OrdenId(UUID.randomUUID().toString()),
+            carrito.clienteId(),
+            itemsOrden,
+            direccion
+        );
+        Orden ordenGuardada = ordenRepository.save(orden);
+
+        // 4. Notificamos al módulo de Ventas para completar el ciclo de vida del carrito
+        ventasApi.completarCheckout(carritoId);
+
+        return ordenGuardada;
+    }
+
     @Transactional
     public Orden crear(CrearOrdenRequest request) {
-        // Por ahora, simulamos la creación para que compile correctamente.
-        // En una app real, aquí se mapearían los items y la dirección desde el DTO.
+        // Implementación básica para compatibilidad con controladores actuales
         DireccionEnvio direccion = new DireccionEnvio("Calle", "Colonia", "Ciudad", "Estado", "12345", "México", "1234567890");
         Orden orden = new Orden(
             new OrdenId(UUID.randomUUID().toString()), 
@@ -51,12 +84,13 @@ public class OrdenService implements OrdenApi{
 
     @Transactional(readOnly = true)
     public Orden buscarPorId(UUID id) {
-        return ordenRepository.findById(id).orElseThrow(() -> new RuntimeException("Orden no encontrada"));
+        return ordenRepository.findById(id.toString())
+                .orElseThrow(() -> new RuntimeException("Orden no encontrada"));
     }
 
     @Transactional(readOnly = true)
     public List<Orden> buscarTodas() {
-        return ordenRepository.findAll(); // Corregido el tipo de retorno
+        return ordenRepository.findAll();
     }
 
     @Transactional

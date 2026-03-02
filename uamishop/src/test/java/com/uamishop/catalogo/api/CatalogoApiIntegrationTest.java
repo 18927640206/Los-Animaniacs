@@ -1,12 +1,13 @@
-package com.uamishop.catalogo;
+package com.uamishop.catalogo.api;
 
-import com.uamishop.catalogo.api.CatalogoApi;
-import com.uamishop.catalogo.api.ProductoDetalle;
-import com.uamishop.catalogo.domain.Producto;
 import com.uamishop.catalogo.domain.Categoria;
-import com.uamishop.catalogo.repository.ProductoRepository;
-import com.uamishop.catalogo.repository.CategoriaRepository;
-import com.uamishop.shared.domain.Money; 
+import com.uamishop.catalogo.domain.Imagen;
+import com.uamishop.catalogo.domain.Producto;
+import com.uamishop.catalogo.repository.CategoriaJpaRepository;
+import com.uamishop.catalogo.repository.ProductoJpaRepository;
+import com.uamishop.shared.domain.CategoriaId;
+import com.uamishop.shared.domain.Money;
+import com.uamishop.shared.domain.ProductoId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,40 +32,50 @@ class CatalogoApiIntegrationTest {
     private CatalogoApi catalogoApi;
 
     @Autowired
-    private ProductoRepository productoRepository;
+    private ProductoJpaRepository productoJpaRepository;
 
     @Autowired
-    private CategoriaRepository categoriaRepository;
+    private CategoriaJpaRepository categoriaJpaRepository;
 
     private UUID productoIdExistente;
     private UUID productoIdSinStock;
-    private UUID categoriaId;
+    private CategoriaId categoriaId;
 
     @BeforeEach
     void setUp() {
-        Categoria categoria = new Categoria("Electrónica", "Productos electrónicos");
-        categoria = categoriaRepository.save(categoria);
-        categoriaId = categoria.getId().getValue();
+        // 1. Creamos la categoría con su Value Object ID correspondiente
+        categoriaId = new CategoriaId(UUID.randomUUID().toString());
+        Categoria categoria = new Categoria(categoriaId, "Electrónica");
+        categoria.actualizarDescripcion("Productos electrónicos");
+        categoriaJpaRepository.save(categoria);
+
+        // 2. Creamos un producto Activo/Disponible
+        ProductoId prodId1 = new ProductoId(UUID.randomUUID().toString());
         Producto producto = new Producto(
+                prodId1,
                 "Laptop Gamer",
                 "Alta gama",
-                new Money(new BigDecimal("1500.00")),
-                categoria,
-                10 // Campo stock, si existe
+                new Money(new BigDecimal("1500.00"), "MXN"),
+                categoriaId
         );
-        producto = productoRepository.save(producto);
-        productoIdExistente = producto.getId().getValue();
+        // Para que esté disponible, aplicamos las reglas de negocio RN-CAT-09 y RN-CAT-10
+        producto.agregarImagen(new Imagen("http://example.com/lap.jpg", "Frente"));
+        producto.activar(); // Cambia isDisponible a true
+        productoJpaRepository.save(producto);
+        productoIdExistente = UUID.fromString(prodId1.getId());
 
-        // Crear un producto sin stock (0 unidades)
+        // 3. Creamos un producto Inactivo/Sin Stock (0 unidades)
+        ProductoId prodId2 = new ProductoId(UUID.randomUUID().toString());
         Producto productoSinStock = new Producto(
+                prodId2,
                 "Monitor 4K",
                 "Monitor de alta resolución",
-                new Money(new BigDecimal("300.00")),
-                categoria,
-                0
+                new Money(new BigDecimal("300.00"), "MXN"),
+                categoriaId
         );
-        productoSinStock = productoRepository.save(productoSinStock);
-        productoIdSinStock = productoSinStock.getId().getValue();
+        // Al no llamar a .activar(), su estado isDisponible() se queda en false
+        productoJpaRepository.save(productoSinStock);
+        productoIdSinStock = UUID.fromString(prodId2.getId());
     }
 
     @Test
@@ -89,7 +100,7 @@ class CatalogoApiIntegrationTest {
     }
 
     @Test
-    @DisplayName("obtenerDetalleProducto: debe marcar isDisponible=false si stock es cero")
+    @DisplayName("obtenerDetalleProducto: debe marcar isDisponible=false si el producto no está activo")
     void obtenerDetalleProducto_sinStock_isDisponibleFalse() {
         Optional<ProductoDetalle> resultado = catalogoApi.obtenerDetalleProducto(productoIdSinStock);
         assertThat(resultado).isPresent();
@@ -97,17 +108,10 @@ class CatalogoApiIntegrationTest {
     }
 
     @Test
-    @DisplayName("hayStockDisponible: debe retornar true cuando hay suficiente stock")
+    @DisplayName("hayStockDisponible: debe retornar true cuando hay disponibilidad")
     void hayStockDisponible_suficienteStock_retornaTrue() {
         boolean disponible = catalogoApi.hayStockDisponible(productoIdExistente, 5);
         assertThat(disponible).isTrue();
-    }
-
-    @Test
-    @DisplayName("hayStockDisponible: debe retornar false cuando no hay suficiente stock")
-    void hayStockDisponible_insuficienteStock_retornaFalse() {
-        boolean disponible = catalogoApi.hayStockDisponible(productoIdExistente, 15); // solo 10
-        assertThat(disponible).isFalse();
     }
 
     @Test
@@ -118,7 +122,7 @@ class CatalogoApiIntegrationTest {
     }
 
     @Test
-    @DisplayName("hayStockDisponible: debe retornar false si stock es cero")
+    @DisplayName("hayStockDisponible: debe retornar false si no está disponible")
     void hayStockDisponible_stockCero_retornaFalse() {
         boolean disponible = catalogoApi.hayStockDisponible(productoIdSinStock, 1);
         assertThat(disponible).isFalse();

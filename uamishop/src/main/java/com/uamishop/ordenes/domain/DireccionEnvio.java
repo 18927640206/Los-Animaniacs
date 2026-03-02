@@ -1,13 +1,19 @@
 package com.uamishop.ordenes.domain;
 
+import jakarta.persistence.Embeddable;
+
+@Embeddable
 public class DireccionEnvio {
-	private final String calle;
-    private final String colonia;
-    private final String ciudad;
-    private final String estado;
-    private final String codigoPostal;
-    private final String pais;
-    private final String telefono;
+    private String calle;
+    private String colonia;
+    private String ciudad;
+    private String estado;
+    private String codigoPostal;
+    private String pais;
+    private String telefono;
+
+    // Constructor vacío para JPA
+    protected DireccionEnvio() {}
 
     public DireccionEnvio(String calle, String colonia, String ciudad, String estado,
                          String codigoPostal, String pais, String telefono) {
@@ -17,7 +23,7 @@ public class DireccionEnvio {
         }
         
         // RN-ORD-03
-        if (!codigoPostal.matches("\\d{5}")) {
+        if (codigoPostal == null || !codigoPostal.matches("\\d{5}")) {
             throw new IllegalArgumentException("Código postal inválido");
         }
         
@@ -27,7 +33,7 @@ public class DireccionEnvio {
         }
         
         // RN-ORD-04
-        if (!telefono.matches("\\d{10}")) {
+        if (telefono == null || !telefono.matches("\\d{10}")) {
             throw new IllegalArgumentException("Teléfono inválido");
         }
         

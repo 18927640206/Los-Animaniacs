@@ -9,7 +9,8 @@ public class ApiError {
     private String message;
     private String path;
     
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+    // CORRECCIÓN: Le quitamos las 'XXX' al final del patrón porque LocalDateTime no maneja zonas horarias
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime timestamp;
 
     public ApiError(int status, String error, String message, String path) {

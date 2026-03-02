@@ -1,69 +1,95 @@
 package com.uamishop.ordenes.domain;
+
 import com.uamishop.shared.domain.Money;
 import com.uamishop.shared.domain.ClienteId;
+import jakarta.persistence.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name = "ordenes")
 public class Orden {
-    private final OrdenId id;
-    private final ClienteId clienteId;
+
+    @Id
+    @Column(name = "id")
+    private String id;
+
+    @Transient
+    private OrdenId ordenId;
+
+    @Embedded
+    // AJUSTE 1: Cambiamos 'value' por 'id' para que coincida con tu clase ClienteId
+    @AttributeOverride(name = "id", column = @Column(name = "cliente_id"))
+    private ClienteId clienteId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado_orden") // Renombramos esta columna por seguridad
     private EstadoOrden estado;
-    private final List<ItemOrden> items;
-    private final DireccionEnvio direccionEnvio;
-    private final LocalDateTime fechaCreacion;
-    private final List<CambioEstado> historialEstados;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "orden_items", joinColumns = @JoinColumn(name = "orden_id"))
+    private List<ItemOrden> items;
+
+    @Embedded
+    // AJUSTE 2: Renombramos la columna 'estado' de la dirección para que no choque con la orden
+    @AttributeOverride(name = "estado", column = @Column(name = "direccion_estado"))
+    private DireccionEnvio direccionEnvio;
+
+    private LocalDateTime fechaCreacion;
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "orden_historial", joinColumns = @JoinColumn(name = "orden_id"))
+    private List<CambioEstado> historialEstados;
+
+    protected Orden() {
+    }
 
     public Orden(OrdenId id, ClienteId clienteId, List<ItemOrden> items, 
                  DireccionEnvio direccionEnvio) {
-        // RN-ORD-01
-        if (items.isEmpty()) {
+        if (items == null || items.isEmpty()) {
             throw new IllegalArgumentException("Debe tener items");
         }
-        
-        this.id = id;
+
+        this.ordenId = id;
+        this.id = id != null ? id.getId() : null;
+
         this.clienteId = clienteId;
         this.items = new ArrayList<>(items);
         this.direccionEnvio = direccionEnvio;
         this.fechaCreacion = LocalDateTime.now();
         this.estado = EstadoOrden.PENDIENTE;
         this.historialEstados = new ArrayList<>();
-        
+
         registrarCambioEstado(null, EstadoOrden.PENDIENTE, "Orden creada");
-        
-        // RN-ORD-02
+
         if (calcularTotal().getMonto().compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("El total de la orden debe ser mayor a cero");
         }
     }
 
     public void confirmar() {
-        // RN-ORD-05
         if (estado != EstadoOrden.PENDIENTE) {
             throw new IllegalStateException("Solo se puede confirmar si está PENDIENTE");
         }
-        
         estado = EstadoOrden.CONFIRMADA;
         registrarCambioEstado(EstadoOrden.PENDIENTE, EstadoOrden.CONFIRMADA, "Confirmada");
     }
 
     public void procesarPago(String referenciaPago) {
-        // RN-ORD-07
         if (estado != EstadoOrden.CONFIRMADA) {
             throw new IllegalStateException("Solo se puede procesar pago si la orden está CONFIRMADA");
         }
-        // RN-ORD-08
         if (referenciaPago == null || referenciaPago.trim().isEmpty()) {
             throw new IllegalArgumentException("La referencia de pago no puede estar vacía");
         }
-        
         registrarCambioEstado(estado, EstadoOrden.PAGO_PROCESADO, "Pago procesado con ref: " + referenciaPago);
         estado = EstadoOrden.PAGO_PROCESADO;
     }
 
     public void marcarEnProceso() {
-        // RN-ORD-09
         if (estado != EstadoOrden.PAGO_PROCESADO) {
             throw new IllegalStateException("Solo se puede marcar en proceso si el pago fue procesado");
         }
@@ -72,23 +98,17 @@ public class Orden {
     }
 
     public void marcarEnviada(String numeroGuia) {
-        // RN-ORD-10
         if (estado != EstadoOrden.EN_PREPARACION) {
             throw new IllegalStateException("Debe estar EN_PREPARACION");
         }
-        
-        // RN-ORD-11 y RN-ORD-12
         if (numeroGuia == null || numeroGuia.length() < 10) {
             throw new IllegalArgumentException("Número de guía inválido");
         }
-        
         estado = EstadoOrden.ENVIADA;
-        registrarCambioEstado(EstadoOrden.EN_PREPARACION, EstadoOrden.ENVIADA, 
-                            "Enviada: " + numeroGuia);
+        registrarCambioEstado(EstadoOrden.EN_PREPARACION, EstadoOrden.ENVIADA, "Enviada: " + numeroGuia);
     }
 
     public void marcarEntregada() {
-        // RN-ORD-13
         if (estado != EstadoOrden.ENVIADA && estado != EstadoOrden.EN_TRANSITO) {
             throw new IllegalStateException("Solo se puede marcar entregada si está ENVIADA o EN_TRANSITO");
         }
@@ -97,20 +117,19 @@ public class Orden {
     }
 
     public void cancelar(String motivo) {
-        // RN-ORD-14
-        if (estado == EstadoOrden.ENVIADA || estado == EstadoOrden.ENTREGADA) {
-            throw new IllegalStateException("No se puede cancelar");
-        }
-        
-        // RN-ORD-15 y RN-ORD-16
-        if (motivo == null || motivo.length() < 10) {
-            throw new IllegalArgumentException("Motivo inválido");
-        }
-        
-        EstadoOrden anterior = estado;
-        estado = EstadoOrden.CANCELADA;
-        registrarCambioEstado(anterior, EstadoOrden.CANCELADA, motivo);
-    }
+        // CORRECCIÓN: Agregamos el chequeo de si ya está CANCELADA
+        if (estado == EstadoOrden.ENVIADA || estado == EstadoOrden.ENTREGADA || estado == EstadoOrden.CANCELADA) {
+            throw new IllegalArgumentException("No se puede cancelar la orden en su estado actual: " + estado);
+            }
+            
+            if (motivo == null || motivo.length() < 10) {
+                throw new IllegalArgumentException("Motivo inválido");
+                }
+                
+                EstadoOrden anterior = estado;
+                estado = EstadoOrden.CANCELADA;
+                registrarCambioEstado(anterior, EstadoOrden.CANCELADA, motivo);
+                }
 
     private void registrarCambioEstado(EstadoOrden anterior, EstadoOrden nuevo, String motivo) {
         historialEstados.add(new CambioEstado(anterior, nuevo, motivo));
@@ -121,10 +140,15 @@ public class Orden {
             .map(ItemOrden::calcularSubtotal)
             .reduce(new Money(new BigDecimal("0"), "MXN"), Money::sumar);
     }
-    
-    // Getters
-    public OrdenId getId() { return id; }
+
+    public OrdenId getId() { 
+        if (this.ordenId == null && this.id != null) {
+            this.ordenId = new OrdenId(this.id);
+        }
+        return this.ordenId; 
+    }
     public EstadoOrden getEstado() { return estado; }
     public List<ItemOrden> getItems() { return new ArrayList<>(items); }
     public List<CambioEstado> getHistorialEstados() { return new ArrayList<>(historialEstados); }
+    public ClienteId getClienteId() { return clienteId; }
 }

@@ -4,15 +4,21 @@ import com.uamishop.catalogo.controller.dto.CategoriaRequest;
 import com.uamishop.catalogo.controller.dto.CategoriaResponse;
 import com.uamishop.catalogo.controller.dto.ProductoResponse;
 import com.uamishop.catalogo.service.CategoriaService;
-
+import com.uamishop.shared.api.ApiError;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,19 +41,35 @@ public class CategoriaController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtener categoría por ID", description = "Busca una categoría específica usando su identificador único.")
-    @ApiResponse(responseCode = "200", description = "Categoría encontrada")
-    @ApiResponse(responseCode = "404", description = "Categoría no encontrada")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Categoría encontrada"),
+        @ApiResponse(responseCode = "404", description = "Categoría no encontrada", content = @Content(schema = @Schema(implementation = ApiError.class)))
+    })
     public ResponseEntity<CategoriaResponse> obtener(@PathVariable UUID id) {
         return ResponseEntity.ok(categoriaService.buscarPorId(id));
     }
 
     @PostMapping
-    @Operation(summary = "Crear nueva categoría", description = "Crea una categoría en el sistema y le asigna un ID único.")
-    @ApiResponse(responseCode = "201", description = "Categoría creada exitosamente")
-    @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos (Validación)")
+    @Operation(summary = "Crear nueva categoría", description = "Crea una categoría en el sistema, le asigna un ID único y retorna su ubicación.")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "201", 
+            description = "Categoría creada exitosamente",
+            headers = @Header(name = "Location", description = "URI del recurso creado", schema = @Schema(type = "string", format = "uri")),
+            content = @Content(schema = @Schema(implementation = CategoriaResponse.class))
+        ),
+        @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos", content = @Content(schema = @Schema(implementation = ApiError.class)))
+    })
     public ResponseEntity<CategoriaResponse> crear(@Valid @RequestBody CategoriaRequest request) {
         CategoriaResponse response = categoriaService.crear(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(response.getId())
+                .toUri();
+        
+        return ResponseEntity.created(location).body(response);
     }
 
     @PutMapping("/{id}")
@@ -55,7 +77,6 @@ public class CategoriaController {
     public ResponseEntity<CategoriaResponse> actualizar(
             @PathVariable UUID id,
             @Valid @RequestBody CategoriaRequest request) {
-
         return ResponseEntity.ok(categoriaService.actualizar(id, request));
     }
 

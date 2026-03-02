@@ -16,7 +16,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,6 +28,7 @@ import java.util.UUID;
 public class ProductoController {
 
     private final ProductoService productoService;
+    
     public ProductoController(ProductoService productoService) {
         this.productoService = productoService;
     }
@@ -33,7 +36,7 @@ public class ProductoController {
     @PostMapping
     @Operation(
         summary = "Crear un nuevo producto",
-        description = "Registra un producto en el catálogo con los datos proporcionados"
+        description = "Registra un producto en el catálogo y retorna la ubicación del recurso creado."
     )
     @ApiResponses(value = {
         @ApiResponse(
@@ -41,7 +44,7 @@ public class ProductoController {
             description = "Producto creado exitosamente",
             headers = @Header(
                 name = "Location",
-                description = "URI del recurso creado (/api/productos/{id})",
+                description = "URI del recurso creado",
                 schema = @Schema(type = "string", format = "uri")
             ),
             content = @Content(
@@ -51,93 +54,50 @@ public class ProductoController {
         ),
         @ApiResponse(
             responseCode = "400",
-            description = "Datos inválidos (error de validación o producto duplicado)",
-            content = @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = ApiError.class)
-            )
-        ),
-        @ApiResponse(responseCode = "401", description = "No autenticado"),
-        @ApiResponse(responseCode = "403", description = "No autorizado")
+            description = "Datos inválidos (error de validación)",
+            content = @Content(schema = @Schema(implementation = ApiError.class))
+        )
     })
     public ResponseEntity<ProductoResponse> crear(@Valid @RequestBody ProductoRequest request) {
         ProductoResponse response = productoService.crear(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(response.getId())
+                .toUri();
+        
+        return ResponseEntity.created(location).body(response);
     }
 
     @GetMapping("/{id}")
-    @Operation(
-        summary = "Obtener producto por ID",
-        description = "Detalles de un producto específico según su identificador único (UUID)."
-    )
+    @Operation(summary = "Obtener producto por ID")
     @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "Producto encontrado",
-            content = @Content(schema = @Schema(implementation = ProductoResponse.class))
-        ),
-        @ApiResponse(responseCode = "400", description = "ID inválido (no es UUID)"),
+        @ApiResponse(responseCode = "200", description = "Producto encontrado"),
         @ApiResponse(responseCode = "404", description = "Producto no encontrado")
     })
-    public ResponseEntity<ProductoResponse> obtenerProducto(
-        @Parameter(description = "Identificador único del producto (UUID)", example = "123e4567-e89b-12d3-a456-426614174000")
-        @PathVariable UUID id) {
+    public ResponseEntity<ProductoResponse> obtenerProducto(@PathVariable UUID id) {
         return ResponseEntity.ok(productoService.buscarPorId(id));
     }
 
     @GetMapping
-    @Operation(
-        summary = "Listar todos los productos",
-        description = "Retorna una lista de todos los productos registrados en el catálogo."
-    )
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "Lista obtenida exitosamente",
-            content = @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = ProductoResponse.class, type = "array")
-            )
-        )
-    })
+    @Operation(summary = "Listar todos los productos")
     public ResponseEntity<List<ProductoResponse>> listar() {
         return ResponseEntity.ok(productoService.listarTodos());
     }
 
     @PutMapping("/{id}")
-    @Operation(
-        summary = "Actualizar un producto existente",
-        description = "Actualiza los datos de un producto existente identificado por su ID."
-    )
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "Producto actualizado correctamente",
-            content = @Content(schema = @Schema(implementation = ProductoResponse.class))
-        ),
-        @ApiResponse(responseCode = "400", description = "Datos inválidos"),
-        @ApiResponse(responseCode = "404", description = "Producto no encontrado")
-    })
+    @Operation(summary = "Actualizar producto existente")
     public ResponseEntity<ProductoResponse> actualizar(
-            @Parameter(description = "Identificador único del producto (UUID)", example = "123e4567-e89b-12d3-a456-426614174000")
             @PathVariable UUID id,
             @Valid @RequestBody ProductoRequest request) {
         return ResponseEntity.ok(productoService.actualizar(id, request));
     }
 
     @DeleteMapping("/{id}")
-    @Operation(
-        summary = "Eliminar un producto",
-        description = "Elimina un producto del catálogo según su ID."
-    )
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "204", description = "Producto eliminado (sin contenido)"),
-        @ApiResponse(responseCode = "400", description = "ID inválido"),
-        @ApiResponse(responseCode = "404", description = "Producto no encontrado")
-    })
-    public ResponseEntity<Void> eliminar(
-        @Parameter(description = "Identificador único del producto (UUID)", example = "123e4567-e89b-12d3-a456-426614174000")
-        @PathVariable UUID id) {
+    @Operation(summary = "Eliminar un producto")
+    @ApiResponse(responseCode = "204", description = "Producto eliminado")
+    public ResponseEntity<Void> eliminar(@PathVariable UUID id) {
         productoService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
