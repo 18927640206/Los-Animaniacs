@@ -12,6 +12,13 @@ import com.uamishop.shared.domain.ClienteId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+//para eventos p6
+import org.springframework.context.ApplicationEventPublisher;
+import java.time.Instant;
+import com.uamishop.shared.event.ProductoCompradoEvent;
+import com.uamishop.shared.event.ProductoAgregadoAlCarritoEvent;
+import com.uamishop.shared.event.OrdenCreadaEvent;
+
 import java.util.UUID;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,10 +28,12 @@ public class OrdenService implements OrdenApi {
 
     private final OrdenJpaRepository ordenRepository;
     private final VentasApi ventasApi; // Comunicación inter-módulo vía interfaz
+    private final ApplicationEventPublisher eventPublisher;
 
-    public OrdenService(OrdenJpaRepository ordenRepository, VentasApi ventasApi) {
+    public OrdenService(OrdenJpaRepository ordenRepository, VentasApi ventasApi, ApplicationEventPublisher eventPublisher) {
         this.ordenRepository = ordenRepository;
         this.ventasApi = ventasApi;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -51,8 +60,7 @@ public class OrdenService implements OrdenApi {
                 new ProductoRef(item.productoId(), item.nombreProducto(), item.sku()),
                 item.cantidad(),
                 item.precioUnitario()
-            ))
-            .collect(Collectors.toList());
+            )).collect(Collectors.toList());
 
         // 3. Creamos y persistimos la nueva orden
         Orden orden = new Orden(
@@ -64,7 +72,35 @@ public class OrdenService implements OrdenApi {
         Orden ordenGuardada = ordenRepository.save(orden);
 
         // 4. Notificamos al módulo de Ventas para completar el ciclo de vida del carrito
-        ventasApi.completarCheckout(carritoId);
+        ventasApi.completarCheckout(carritoId); //->SE tendra que borrar para el paso 3 segun parece para desacoplar los modulos.
+
+        //Publicar ProductoCompradoEvent (para Catálogo)
+        List<ProductoCompradoEvent.ItemComprado> itemsEvent = ordenGuardada.getItems().stream()
+            .map(item -> new ProductoCompradoEvent.ItemComprado(
+                // Accedemos a través de productoRef
+                UUID.fromString(item.getProductoRef().getProductoId().getId()),
+                item.getProductoRef().getSku(),
+                item.getCantidad(),
+                item.getPrecioUnitario().getMonto(),
+                item.getPrecioUnitario().getMoneda()
+            )).toList();
+
+        eventPublisher.publishEvent(new ProductoCompradoEvent(
+            UUID.randomUUID(),
+            java.time.Instant.now(),
+            UUID.fromString(ordenGuardada.getId().getId()),
+            UUID.fromString(ordenGuardada.getClienteId().getId()),
+            itemsEvent
+        ));
+
+        //Publicar OrdenCreadaEvent (para Ventas - Paso 3)
+        /*eventPublisher.publishEvent(new OrdenCreadaEvent(
+            UUID.randomUUID(),
+            java.time.Instant.now(),
+            UUID.fromString(ordenGuardada.getId().getId()),
+            carritoId,
+            UUID.fromString(ordenGuardada.getClienteId().getId())
+        ));*/
 
         return ordenGuardada;
     }
@@ -79,7 +115,39 @@ public class OrdenService implements OrdenApi {
             new java.util.ArrayList<>(), 
             direccion
         );
-        return ordenRepository.save(orden);
+        
+        Orden ordenGuardada = ordenRepository.save(orden);
+
+        //para los eventos de la practica 6
+        //Publicar ProductoCompradoEvent (para Catálogo)
+        List<ProductoCompradoEvent.ItemComprado> itemsEvent = ordenGuardada.getItems().stream()
+            .map(item -> new ProductoCompradoEvent.ItemComprado(
+                // Accedemos a través de productoRef
+                UUID.fromString(item.getProductoRef().getProductoId().getId()),
+                item.getProductoRef().getSku(),
+                item.getCantidad(),
+                item.getPrecioUnitario().getMonto(),
+                item.getPrecioUnitario().getMoneda()
+            )).toList();
+
+        eventPublisher.publishEvent(new ProductoCompradoEvent(
+            UUID.randomUUID(),
+            Instant.now(),
+            UUID.fromString(ordenGuardada.getId().getId()),
+            UUID.fromString(ordenGuardada.getClienteId().getId()),
+            itemsEvent
+        ));
+
+        //Se publica OrdenCreadaEvent (para Ventas - Paso 3)
+        /*eventPublisher.publishEvent(new OrdenCreadaEvent(
+            UUID.randomUUID(),
+            Instant.now(),
+            UUID.fromString(ordenGuardada.getId().getId()),
+            UUID.randomUUID(),
+            UUID.fromString(ordenGuardada.getClienteId().getId())
+        ));*/
+
+        return ordenGuardada;
     }
 
     @Transactional(readOnly = true)

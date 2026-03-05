@@ -51,6 +51,8 @@ public class ItemOrden {
     
     public ProductoRef getProductoRef() { return productoRef; }
     public int getCantidad() { return cantidad; }
+
+    public Money getPrecioUnitario() { return precioUnitario; }
     
     public ItemOrdenId getId() {
         if (this.id == null && this.itemOrdenIdStr != null) {

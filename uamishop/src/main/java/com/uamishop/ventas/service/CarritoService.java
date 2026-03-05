@@ -13,6 +13,13 @@ import com.uamishop.ventas.repository.CarritoJpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+//para eventos p6
+import org.springframework.context.ApplicationEventPublisher;
+import java.time.Instant;
+import com.uamishop.shared.event.ProductoCompradoEvent;
+import com.uamishop.shared.event.ProductoAgregadoAlCarritoEvent;
+import com.uamishop.shared.event.OrdenCreadaEvent;
+
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -21,8 +28,12 @@ public class CarritoService implements VentasApi {
 
     private final CarritoJpaRepository carritoRepository;
 
-    public CarritoService(CarritoJpaRepository carritoRepository) {
+    //Inyectar el publicador para disparar el evento
+    private final ApplicationEventPublisher eventPublisher;
+
+    public CarritoService(CarritoJpaRepository carritoRepository, ApplicationEventPublisher eventPublisher) {
         this.carritoRepository = carritoRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -66,7 +77,20 @@ public class CarritoService implements VentasApi {
     public Carrito agregarItem(UUID carritoId, ProductoRef producto, int cantidad, Money precioUnitario) {
         Carrito carrito = obtenerCarrito(carritoId);
         carrito.agregarProducto(producto, cantidad, precioUnitario);
-        return carritoRepository.save(carrito);
+        Carrito carritoGuardado = carritoRepository.save(carrito);
+
+        // Se publica el evento (Paso 1.2 de la práctica 6)
+        eventPublisher.publishEvent(new ProductoAgregadoAlCarritoEvent(
+            UUID.randomUUID(),
+            Instant.now(),
+            UUID.fromString(producto.getProductoId().getId()),
+            carritoId,
+            cantidad,
+            precioUnitario.getMonto(),
+            precioUnitario.getMoneda()
+        ));
+
+        return carritoGuardado;
     }
 
     @Transactional
