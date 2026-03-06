@@ -5,6 +5,7 @@ import com.uamishop.catalogo.service.ProductoEstadisticasService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.scheduling.annotation.Async;
 
 /**
  * escucha eventos cuando un producto es agregado al carrito.
@@ -23,6 +24,7 @@ public class ProductoAgregadoAlCarritoListener {
      * @param event evento que contiene la información del producto agregado
      */
     @EventListener
+    @Async
     public void manejarProductoAgregadoAlCarrito(ProductoAgregadoAlCarritoEvent event) {
 
         productoEstadisticasService.registrarAgregadoAlCarrito(

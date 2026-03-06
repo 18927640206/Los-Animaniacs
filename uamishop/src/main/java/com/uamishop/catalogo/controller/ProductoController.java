@@ -3,7 +3,10 @@ package com.uamishop.catalogo.controller;
 import jakarta.validation.Valid;    
 import com.uamishop.catalogo.controller.dto.ProductoRequest;
 import com.uamishop.catalogo.controller.dto.ProductoResponse;
+import com.uamishop.catalogo.controller.dto.ProductoEstadisticasResponse;
 import com.uamishop.catalogo.service.ProductoService;
+import com.uamishop.catalogo.service.ProductoEstadisticasService;
+import com.uamishop.catalogo.domain.ProductoEstadisticas;
 import com.uamishop.shared.api.ApiError;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.headers.Header;
@@ -28,9 +31,11 @@ import java.util.UUID;
 public class ProductoController {
 
     private final ProductoService productoService;
+    private final ProductoEstadisticasService productoEstadisticasService;
     
-    public ProductoController(ProductoService productoService) {
+    public ProductoController(ProductoService productoService, ProductoEstadisticasService productoEstadisticasService) {
         this.productoService = productoService;
+        this.productoEstadisticasService = productoEstadisticasService;
     }
 
     @PostMapping
@@ -100,5 +105,40 @@ public class ProductoController {
     public ResponseEntity<Void> eliminar(@PathVariable UUID id) {
         productoService.eliminar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/mas-vendidos")
+    @Operation(
+        summary = "Lista de productos ordenados por ventas",
+        description = "Retorna el top de productos mas vendidos."
+    )
+    public ResponseEntity<List<ProductoEstadisticasResponse>> obtenerMasVendidos(
+        @RequestParam(defaultValue = "10") int limit) {
+            List<ProductoEstadisticasResponse> response = productoEstadisticasService.obtenerMasVendidos(limit)
+            .stream()
+            .map(this::mapearAResponse)
+            .toList();
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}/estadisticas")
+    public ResponseEntity<ProductoEstadisticasResponse> obtenerEstadisticas(@PathVariable UUID id) {
+
+        ProductoEstadisticas stats = productoEstadisticasService.obtenerEstadisticas(id);
+
+        if (stats == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(mapearAResponse(stats));
+    }
+
+    private ProductoEstadisticasResponse mapearAResponse(ProductoEstadisticas stats) {
+        return new ProductoEstadisticasResponse(
+            stats.getVentasTotales(),          
+            stats.getCantidadVendida(),        
+            stats.getVecesAgregadoAlCarrito(), 
+            stats.getUltimaVentaAt()           
+        );
     }
 }

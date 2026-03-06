@@ -2,6 +2,7 @@ package com.uamishop.catalogo.service;
 
 //import com.uamishop.catalogo.domain.CategoriaId;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,16 +29,17 @@ public class ProductoEstadisticasService {
      * Incrementa el contador de veces agregado al carrito
      * y actualiza la fecha del último agregado.
      */
+    @Transactional
     public void registrarVenta(UUID productoId, int cantidad) {
 
         ProductoEstadisticas stats = repository.findById(productoId)
-                .orElse(new ProductoEstadisticas(productoId));
+                .orElseGet(() -> new ProductoEstadisticas(productoId));
 
         stats.setVentasTotales(stats.getVentasTotales() + 1);
         stats.setCantidadVendida(stats.getCantidadVendida() + cantidad);
         stats.setUltimaVentaAt(Instant.now());
 
-        repository.save(stats);
+        repository.saveAndFlush(stats);
     }
 
     /**
@@ -45,18 +47,20 @@ public class ProductoEstadisticasService {
      * Incrementa el contador de veces agregado al carrito
      * y actualiza la fecha del último agregado.
      */
+    @Transactional
     public void registrarAgregadoAlCarrito(UUID productoId) {
 
         ProductoEstadisticas stats = repository.findById(productoId)
-                .orElse(new ProductoEstadisticas(productoId));
+                .orElseGet(() -> new ProductoEstadisticas(productoId));
 
         stats.setVecesAgregadoAlCarrito(stats.getVecesAgregadoAlCarrito() + 1);
         stats.setUltimaAgregadoAlCarritoAt(Instant.now());
 
-        repository.save(stats);
+        repository.saveAndFlush(stats);
     }
 
     // Obtener productos más vendidos
+    @Transactional
     public List<ProductoEstadisticas> obtenerMasVendidos(int limit) {
 
         // versión simple (puedes mejorar con Pageable)
@@ -64,6 +68,7 @@ public class ProductoEstadisticasService {
     }
 
     // Obtener estadísticas de un producto
+    @Transactional(readOnly = true)
     public ProductoEstadisticas obtenerEstadisticas(UUID productoId) {
 
         return repository.findById(productoId)
