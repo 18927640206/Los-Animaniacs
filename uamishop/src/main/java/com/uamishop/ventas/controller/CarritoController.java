@@ -77,5 +77,15 @@ public class CarritoController {
     public ResponseEntity<Carrito> vaciar(@PathVariable UUID id) {
         Carrito carrito = carritoService.vaciar(id);
         return ResponseEntity.ok(carrito);
+
+    @PostMapping("/{carritoId}/confirmar") 
+    public ResponseEntity<?> confirmarCheckout(
+             @PathVariable UUID carritoId,
+             @RequestBody DatosCheckout datos) {
+
+    Orden orden = ordenService.crearDesdeCarrito(carritoId, datos.getClienteId(), ...);
+
+
+    return ResponseEntity.ok(orden);
     }
 }

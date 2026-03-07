@@ -126,8 +126,10 @@ public class CarritoService implements VentasApi {
     @Override
     @Transactional
     public void completarCheckout(UUID carritoId) {
-        Carrito carrito = obtenerCarrito(carritoId);
-        carrito.completarCheckout();
+        Carrito carrito = carritoRepository.findById(carritoId)
+            .orElseThrow(() -> new CarritoNoEncontradoException(carritoId));
+
+        carrito.COMPLETADO(); //Cambiar a estado COMPLETADO
         carritoRepository.save(carrito);
     }
 
