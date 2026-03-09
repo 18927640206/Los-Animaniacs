@@ -15,18 +15,18 @@ public class ProductoEstadisticas {
     @Column(columnDefinition = "VARBINARY(16)")
     private UUID productoId;
 
-    private long ventasTotales;              // número de transacciones
-    private long cantidadVendida;            // unidades vendidas
-    private long vecesAgregadoAlCarrito;     // número de veces agregado al carrito
+    private long ventasTotales;              
+    private long cantidadVendida;            
+    private long vecesAgregadoAlCarrito;     
 
     private Instant ultimaVentaAt;
     private Instant ultimaAgregadoAlCarritoAt;
 
-    // Constructor vacío (requerido por JPA)
+    
     public ProductoEstadisticas() {
     }
 
-    // Constructor con productoId
+    
     public ProductoEstadisticas(UUID productoId) {
         this.productoId = productoId;
         this.ventasTotales = 0;
@@ -34,7 +34,7 @@ public class ProductoEstadisticas {
         this.vecesAgregadoAlCarrito = 0;
     }
 
-    // Getters y Setters
+    
 
     public UUID getProductoId() {
         return productoId;

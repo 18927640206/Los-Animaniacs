@@ -15,12 +15,12 @@ public class CrearOrdenRequest {
     private String clienteId;
 
     @Schema(description = "Lista de productos incluidos en la orden")
-    @Valid // Valida recursivamente cada item en la lista [cite: 40]
-    @NotEmpty(message = "La orden debe tener al menos un item") // RN-ORD-01 [cite: 623]
+    @Valid // Valida recursivamente cada item en la lista 
+    @NotEmpty(message = "La orden debe tener al menos un item") 
     private List<ItemOrdenRequest> items;
 
     @Schema(description = "Información detallada para el envío")
-    @Valid // Valida el objeto de dirección [cite: 40]
+    @Valid // Valida el objeto de dirección 
     @NotNull(message = "La dirección de envío es obligatoria")
     private DireccionEnvioRequest direccionEnvio;
 

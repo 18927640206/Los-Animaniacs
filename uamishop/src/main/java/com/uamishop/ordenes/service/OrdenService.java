@@ -107,7 +107,6 @@ public class OrdenService implements OrdenApi {
 
     @Transactional
     public Orden crear(CrearOrdenRequest request) {
-        // Implementación básica para compatibilidad con controladores actuales
         DireccionEnvio direccion = new DireccionEnvio("Calle", "Colonia", "Ciudad", "Estado", "12345", "México", "1234567890");
         Orden orden = new Orden(
             new OrdenId(UUID.randomUUID().toString()), 
@@ -118,11 +117,9 @@ public class OrdenService implements OrdenApi {
         
         Orden ordenGuardada = ordenRepository.save(orden);
 
-        //para los eventos de la practica 6
-        //Publicar ProductoCompradoEvent (para Catálogo)
+        // Notificar a Catálogo 
         List<ProductoCompradoEvent.ItemComprado> itemsEvent = ordenGuardada.getItems().stream()
             .map(item -> new ProductoCompradoEvent.ItemComprado(
-                // Accedemos a través de productoRef
                 UUID.fromString(item.getProductoRef().getProductoId().getId()),
                 item.getProductoRef().getSku(),
                 item.getCantidad(),
@@ -136,15 +133,6 @@ public class OrdenService implements OrdenApi {
             UUID.fromString(ordenGuardada.getId().getId()),
             UUID.fromString(ordenGuardada.getClienteId().getId()),
             itemsEvent
-        ));
-
-        Se publica OrdenCreadaEvent (para Ventas - Paso 3)
-        eventPublisher.publishEvent(new OrdenCreadaEvent(
-            UUID.randomUUID(),
-            Instant.now(),
-            UUID.fromString(ordenGuardada.getId().getId()),
-            carritoId,
-            UUID.fromString(ordenGuardada.getClienteId().getId())
         ));
 
         return ordenGuardada;

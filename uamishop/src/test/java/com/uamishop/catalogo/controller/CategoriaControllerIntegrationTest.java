@@ -17,33 +17,33 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT) // [cite: 798]
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT) 
 class CategoriaControllerIntegrationTest {
 
     private static final String BASE_URL = "/api/v2/categorias";
 
     @Autowired
-    private TestRestTemplate restTemplate; // [cite: 802]
+    private TestRestTemplate restTemplate; 
 
     @Nested
-    @DisplayName("POST /api/v2/categorias") // [cite: 812, 813]
+    @DisplayName("POST /api/v2/categorias") 
     class CrearCategoria {
 
         @Test
-        @DisplayName("Debe crear una categoría y retornar 201") // [cite: 816]
+        @DisplayName("Debe crear una categoría y retornar 201") 
         void crear_Retorna201() {
             // Preparar el DTO de petición
             CategoriaRequest requestBody = new CategoriaRequest();
             requestBody.setNombre("Libros");
             requestBody.setDescripcion("Categoría de prueba");
 
-            HttpEntity<CategoriaRequest> request = new HttpEntity<>(requestBody); // [cite: 818]
+            HttpEntity<CategoriaRequest> request = new HttpEntity<>(requestBody);
 
             // Invocar el endpoint
             ResponseEntity<CategoriaResponse> response = restTemplate.exchange(
-                BASE_URL, HttpMethod.POST, request, CategoriaResponse.class); // [cite: 820, 822]
+                BASE_URL, HttpMethod.POST, request, CategoriaResponse.class); 
 
-            // Validaciones [cite: 823, 825]
+            // Validaciones
             assertEquals(HttpStatus.CREATED, response.getStatusCode());
             assertNotNull(response.getBody());
             assertEquals("Libros", response.getBody().getNombre());
@@ -54,14 +54,14 @@ class CategoriaControllerIntegrationTest {
         @DisplayName("Debe retornar 400 cuando el nombre está vacío")
         void crear_NombreVacio_Retorna400() {
             CategoriaRequest requestBody = new CategoriaRequest();
-            requestBody.setNombre(""); // Invalido [cite: 879]
+            requestBody.setNombre(""); // Invalido 
 
             HttpEntity<CategoriaRequest> request = new HttpEntity<>(requestBody);
 
             ResponseEntity<ApiError> response = restTemplate.exchange(
                 BASE_URL, HttpMethod.POST, request, ApiError.class);
 
-            // Valida que el GlobalExceptionHandler esté funcionando [cite: 726, 774]
+            // Valida que el GlobalExceptionHandler esté funcionando 
             assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
             assertNotNull(response.getBody());
             assertEquals("Bad Request", response.getBody().getError());

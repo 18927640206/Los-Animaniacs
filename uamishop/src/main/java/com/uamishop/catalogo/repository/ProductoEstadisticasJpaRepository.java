@@ -8,10 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Repositorio JPA para la entidad ProductoEstadisticas.
- * Permite realizar operaciones CRUD sobre las estadísticas de productos.
- */
 public interface ProductoEstadisticasJpaRepository extends JpaRepository<ProductoEstadisticas, UUID> {
 
     /**

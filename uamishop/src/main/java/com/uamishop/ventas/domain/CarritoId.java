@@ -2,22 +2,20 @@ package com.uamishop.ventas.domain;
 
 import jakarta.persistence.Embeddable;
 import java.io.Serializable;
+import java.util.UUID;
 
 @Embeddable
 public class CarritoId implements Serializable {
     private String id;
     
-    protected CarritoId() {} // Obligatorio para JPA
+    protected CarritoId() {} 
     
     public CarritoId(String id) { this.id = id; }
+    
+    // Método necesario para solucionar el error en el Listener 
+    public static CarritoId of(UUID uuid) {
+        return new CarritoId(uuid.toString());
+    }
+
     public String getId() { return id; }
 }
-/*package com.uamishop.ventas.domain;
-
-public class CarritoId {
-	private final String id;
-    public CarritoId(String id) { this.id = id; }
-    public String getId() { return id; }
-	
-
-}*/

@@ -20,22 +20,21 @@ public class Carrito {
 
     
     @Embedded
-    // --- CAMBIO AQUÍ: Forzar a que el ID del cliente sea cliente_id ---
     @AttributeOverrides({
         @AttributeOverride(name = "id", column = @Column(name = "cliente_id"))
     })
     private ClienteId clienteId;
 
-    @Enumerated(EnumType.STRING) // Importante para persistir el Enum
+    @Enumerated(EnumType.STRING) 
     private EstadoCarrito estado;
 
-    // CAMBIO AQUÍ: Mapeo de la colección para JPA
+    
     @ElementCollection(fetch = FetchType.EAGER) 
     @CollectionTable(
         name = "CARRITO_ITEMS",
         joinColumns = @JoinColumn(name = "carrito_id")
     )
-    private List<ItemCarrito> items; // quitamos 'final' para que JPA pueda inyectar datos
+    private List<ItemCarrito> items;
 
     @Embedded
     private DescuentoAplicado descuentoAplicado;
@@ -45,13 +44,12 @@ public class Carrito {
         this.id = id;
         this.clienteId = clienteId; 
         this.estado = EstadoCarrito.ACTIVO;
-        this.items = new ArrayList<>(); // Inicializamos para lógica de negocio
+        this.items = new ArrayList<>(); 
         this.descuentoAplicado = null;
     }
 
-    // Constructor vacío protegido para JPA
+    
     protected Carrito() {
-        // CAMBIO AQUÍ: Inicializar la lista para que JPA no falle
         this.items = new ArrayList<>();
     }
 
@@ -132,12 +130,12 @@ public class Carrito {
         estado = EstadoCarrito.EN_CHECKOUT;
     }
 
-    public void completarCheckout() {
+    public void completar() {
         // RN-VEN-13
         if (estado != EstadoCarrito.EN_CHECKOUT) {
             throw new IllegalStateException("Solo se puede completar si está EN_CHECKOUT");
         }
-        estado = EstadoCarrito.COMPLETADO;
+        this.estado = EstadoCarrito.COMPLETADO;
     }
 
     public void abandonar() {
@@ -181,7 +179,6 @@ public class Carrito {
     }
     
     // Getters
-    //public CarritoId getId() { return carritoId; }
     public ClienteId getClienteId() { return clienteId; }
     public String getId() { return id; }
     public EstadoCarrito getEstado() { return estado; }

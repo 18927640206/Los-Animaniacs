@@ -73,7 +73,7 @@ class VentasApiIntegrationTest {
                 new Money(new BigDecimal("60.00"), "MXN")
         );
         carritoCompletadoObj.iniciarCheckout();
-        carritoCompletadoObj.completarCheckout(); // Lo completamos
+        carritoCompletadoObj.completar();
         carritoJpaRepository.save(carritoCompletadoObj);
     }
 

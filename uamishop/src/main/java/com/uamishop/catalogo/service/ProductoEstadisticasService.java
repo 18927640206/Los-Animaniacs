@@ -1,6 +1,5 @@
 package com.uamishop.catalogo.service;
 
-//import com.uamishop.catalogo.domain.CategoriaId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,22 +12,16 @@ import lombok.RequiredArgsConstructor;
 
 import java.time.Instant;
 
-/**
- * Registra una venta de un producto.
- * Si el producto no tiene estadísticas previas, se crean.
- * Incrementa el número de ventas totales y la cantidad vendida.
- */
+
 @Service
-@RequiredArgsConstructor
 public class ProductoEstadisticasService {
 
     private final ProductoEstadisticasJpaRepository repository;
 
-    /**
-     * Registra que un producto fue agregado al carrito.
-     * Incrementa el contador de veces agregado al carrito
-     * y actualiza la fecha del último agregado.
-     */
+    public ProductoEstadisticasService(ProductoEstadisticasJpaRepository repository) {
+        this.repository = repository;
+    }
+    
     @Transactional
     public void registrarVenta(UUID productoId, int cantidad) {
 
@@ -42,11 +35,6 @@ public class ProductoEstadisticasService {
         repository.saveAndFlush(stats);
     }
 
-    /**
-     * Registra que un producto fue agregado al carrito.
-     * Incrementa el contador de veces agregado al carrito
-     * y actualiza la fecha del último agregado.
-     */
     @Transactional
     public void registrarAgregadoAlCarrito(UUID productoId) {
 
@@ -59,15 +47,13 @@ public class ProductoEstadisticasService {
         repository.saveAndFlush(stats);
     }
 
-    // Obtener productos más vendidos
     @Transactional
     public List<ProductoEstadisticas> obtenerMasVendidos(int limit) {
 
-        // versión simple (puedes mejorar con Pageable)
+        
         return repository.findMasVendidos(limit);
     }
-
-    // Obtener estadísticas de un producto
+    
     @Transactional(readOnly = true)
     public ProductoEstadisticas obtenerEstadisticas(UUID productoId) {
 

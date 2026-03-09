@@ -10,15 +10,14 @@ import com.uamishop.shared.domain.Money;
 import com.uamishop.shared.domain.ProductoId;
 import com.uamishop.ventas.repository.CarritoJpaRepository;
 
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-//para eventos p6
+
 import org.springframework.context.ApplicationEventPublisher;
 import java.time.Instant;
-import com.uamishop.shared.event.ProductoCompradoEvent;
 import com.uamishop.shared.event.ProductoAgregadoAlCarritoEvent;
-import com.uamishop.shared.event.OrdenCreadaEvent;
 
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -28,7 +27,6 @@ public class CarritoService implements VentasApi {
 
     private final CarritoJpaRepository carritoRepository;
 
-    //Inyectar el publicador para disparar el evento
     private final ApplicationEventPublisher eventPublisher;
 
     public CarritoService(CarritoJpaRepository carritoRepository, ApplicationEventPublisher eventPublisher) {
@@ -44,8 +42,8 @@ public class CarritoService implements VentasApi {
         var itemsResumen = carrito.getItems().stream()
             .map(item -> new ItemCarritoResumen(
                 item.getProductoRef().getProductoId(),
-                item.getProductoRef().getNombre(), // Extraemos el nombre
-                item.getProductoRef().getSku(),    // Extraemos el SKU
+                item.getProductoRef().getNombre(), 
+                item.getProductoRef().getSku(),    
                 item.getCantidad(),
                 item.getPrecioUnitario()
             ))
@@ -79,7 +77,6 @@ public class CarritoService implements VentasApi {
         carrito.agregarProducto(producto, cantidad, precioUnitario);
         Carrito carritoGuardado = carritoRepository.save(carrito);
 
-        // Se publica el evento (Paso 1.2 de la práctica 6)
         eventPublisher.publishEvent(new ProductoAgregadoAlCarritoEvent(
             UUID.randomUUID(),
             Instant.now(),
@@ -126,10 +123,10 @@ public class CarritoService implements VentasApi {
     @Override
     @Transactional
     public void completarCheckout(UUID carritoId) {
-        Carrito carrito = carritoRepository.findById(carritoId)
-            .orElseThrow(() -> new CarritoNoEncontradoException(carritoId));
+        Carrito carrito = carritoRepository.findById(carritoId.toString())
+            .orElseThrow(() -> new com.uamishop.shared.exception.ResourceNotFoundException("Carrito no encontrado: " + carritoId));
 
-        carrito.COMPLETADO(); //Cambiar a estado COMPLETADO
+        carrito.completar(); 
         carritoRepository.save(carrito);
     }
 

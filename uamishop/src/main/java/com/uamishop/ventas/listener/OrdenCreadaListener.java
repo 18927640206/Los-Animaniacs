@@ -17,6 +17,5 @@ public class OrdenCreadaListener {
 
     @EventListener
     public void handle(OrdenCreadaEvent event) {
-        carritoService.completarCheckout(CarritoId.of(event.carritoId()));
-    }
+        carritoService.completarCheckout(event.carritoId());    }
 }

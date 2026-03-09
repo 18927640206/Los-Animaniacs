@@ -4,9 +4,9 @@ import com.uamishop.ventas.controller.dto.AgregarItemRequest;
 import com.uamishop.ventas.controller.dto.CrearCarritoRequest;
 import com.uamishop.ventas.domain.Carrito;
 import com.uamishop.ventas.domain.ProductoRef;
-//import com.uamishop.catalogo.domain.ProductoId;
 import com.uamishop.shared.domain.ProductoId;
 import com.uamishop.ventas.service.CarritoService;
+import com.uamishop.ordenes.domain.DireccionEnvio;
 import com.uamishop.shared.domain.ClienteId;
 import com.uamishop.shared.domain.Money;
 
@@ -23,9 +23,11 @@ import java.util.UUID;
 public class CarritoController {
 
     private final CarritoService carritoService;
+    private final com.uamishop.ordenes.api.OrdenApi ordenApi; // Para el flujo de checkout
 
-    public CarritoController(CarritoService carritoService) {
+    public CarritoController(CarritoService carritoService, com.uamishop.ordenes.api.OrdenApi ordenApi) {
         this.carritoService = carritoService;
+        this.ordenApi = ordenApi;
     }
 
     @PostMapping
@@ -77,15 +79,15 @@ public class CarritoController {
     public ResponseEntity<Carrito> vaciar(@PathVariable UUID id) {
         Carrito carrito = carritoService.vaciar(id);
         return ResponseEntity.ok(carrito);
+    }
 
     @PostMapping("/{carritoId}/confirmar") 
     public ResponseEntity<?> confirmarCheckout(
              @PathVariable UUID carritoId,
-             @RequestBody DatosCheckout datos) {
-
-    Orden orden = ordenService.crearDesdeCarrito(carritoId, datos.getClienteId(), ...);
-
-
-    return ResponseEntity.ok(orden);
-    }
+             @RequestBody com.uamishop.ordenes.domain.DireccionEnvio direccion) {
+                
+                var orden = ordenApi.obtenerResumen(UUID.randomUUID()); // Solo para cumplir con la firma, se reemplazará por carritoId en el paso 3
+                
+                return ResponseEntity.ok(orden);
+            }
 }
