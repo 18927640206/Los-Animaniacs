@@ -1,40 +1,62 @@
+# Nombre del proyecto Docker Compose
 name: uamishop-app
 
+# Definición de servicios
 services:
+  # Servicio de base de datos MySQL
   mysql:
+    # Imagen de Docker a usar
     image: mysql:latest
+    # Nombre del contenedor
     container_name: uamishop-mysql
+    # Variables de entorno para configurar MySQL
     environment:
+      # Nombre de la base de datos
       MYSQL_DATABASE: uamishop
+      # Usuario de la base de datos
       MYSQL_USER: uamishop
+      # Contraseña del usuario
       MYSQL_PASSWORD: uamishop
+      # Contraseña del root
       MYSQL_ROOT_PASSWORD: root
+    # Puertos expuestos
     ports:
-      - "3306:3306"
+      - "3306:3306"  # Mapea el puerto 3306 del host al contenedor
+    # Volúmenes para persistir datos
     volumes:
-      - mysql_data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql  # Monta el volumen mysql_data en /var/lib/mysql
+    # Verificación de salud del servicio
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-      start_period: 15s
-    restart: unless-stopped
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]  # Comando para verificar si MySQL responde
+      interval: 5s  # Intervalo entre verificaciones
+      timeout: 5s  # Tiempo de espera para la verificación
+      retries: 10  # Número de reintentos
+      start_period: 15s  # Periodo inicial antes de empezar las verificaciones
+    # Política de reinicio
+    restart: unless-stopped  # Reinicia el contenedor a menos que se detenga manualmente
 
+  # Servicio de la aplicación Uamishop
   uamishop:
+    # Imagen de Docker de la aplicación
     image: joahan6699/uamishop:latest
+    # Nombre del contenedor
     container_name: uamishop
+    # Puertos expuestos
     ports:
-      - "8080:8080"
+      - "8080:8080"  # Mapea el puerto 8080 del host al contenedor
+    # Variables de entorno para la aplicación Spring
     environment:
-      SPRING_PROFILES_ACTIVE: mysql
-      SPRING_DATASOURCE_URL: "jdbc:mysql://mysql:3306/uamishop?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true"
-      SPRING_DATASOURCE_USERNAME: uamishop
-      SPRING_DATASOURCE_PASSWORD: uamishop
+      SPRING_PROFILES_ACTIVE: mysql  # Activa el perfil MySQL en Spring
+      SPRING_DATASOURCE_URL: "jdbc:mysql://mysql:3306/uamishop?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true"  # URL de conexión a la DB
+      SPRING_DATASOURCE_USERNAME: uamishop  # Usuario para la DB
+      SPRING_DATASOURCE_PASSWORD: uamishop  # Contraseña para la DB
+    # Dependencias del servicio
     depends_on:
       mysql:
-        condition: service_healthy
+        condition: service_healthy  # Espera a que MySQL esté saludable antes de iniciar
+    # Política de reinicio
     restart: unless-stopped
 
+# Definición de volúmenes
 volumes:
-  mysql_data:
+  mysql_data:  # Volumen nombrado para persistir datos de MySQL
