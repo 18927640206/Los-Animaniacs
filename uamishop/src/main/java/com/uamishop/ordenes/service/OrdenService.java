@@ -94,13 +94,13 @@ public class OrdenService implements OrdenApi {
         ));
 
         //Publicar OrdenCreadaEvent (para Ventas - Paso 3)
-        /*eventPublisher.publishEvent(new OrdenCreadaEvent(
+        eventPublisher.publishEvent(new OrdenCreadaEvent(
             UUID.randomUUID(),
             java.time.Instant.now(),
             UUID.fromString(ordenGuardada.getId().getId()),
             carritoId,
             UUID.fromString(ordenGuardada.getClienteId().getId())
-        ));*/
+        ));
 
         return ordenGuardada;
     }
