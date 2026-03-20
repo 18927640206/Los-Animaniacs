@@ -9,17 +9,15 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
-
-// creada para punto 1.2 de P8
 
 @Configuration
 public class RabbitConfig {
     public static final String EVENTS_EXCHANGE = "uamishop.events";
     public static final String QUEUE_CATALOGO_PRODUCTO_COMPRADO = "catalogo.producto-comprado";
+    public static final String QUEUE_CATALOGO_PRODUCTO_AGREGADO = "catalogo.producto-agregado-carrito";
     public static final String RK_PRODUCTO_COMPRADO = "producto.comprado";
+    public static final String RK_PRODUCTO_AGREGADO = "producto.agregado-carrito";
 
     @Bean
     public TopicExchange eventsExchange() {
@@ -30,6 +28,12 @@ public class RabbitConfig {
     public Queue catalogoProductoCompradoQueue() {
         return new Queue(QUEUE_CATALOGO_PRODUCTO_COMPRADO, true);
     }
+
+    @Bean
+    public Queue catalogoProductoAgregadoQueue() {
+       return new Queue(QUEUE_CATALOGO_PRODUCTO_AGREGADO, true);
+   }
+
 
     @Bean
     public Binding catalogoProductoCompradoBinding(Queue catalogoProductoCompradoQueue, TopicExchange eventsExchange) {
@@ -44,7 +48,11 @@ public class RabbitConfig {
     }
 
     @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
+    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory,
+                                        Jackson2JsonMessageConverter messageConverter) {
+       RabbitTemplate template = new RabbitTemplate(connectionFactory);
+       template.setMessageConverter(messageConverter);
+       return template;
+   }
+
 }
