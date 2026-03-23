@@ -1,3 +1,5 @@
+# Archivo: /workspaces/Los-Animaniacs/docker-compose.yml
+
 name: uamishop-app
 
 services:

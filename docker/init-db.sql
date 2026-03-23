@@ -1,3 +1,5 @@
+-- Archivo: /workspaces/Los-Animaniacs/docker/init-db.sql
+
 CREATE DATABASE IF NOT EXISTS uamishop_catalogo;
 CREATE DATABASE IF NOT EXISTS uamishop_ventas;
 CREATE DATABASE IF NOT EXISTS uamishop_ordenes;

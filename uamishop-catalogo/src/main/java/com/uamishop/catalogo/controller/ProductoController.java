@@ -1,3 +1,5 @@
+// Archivo: /workspaces/Los-Animaniacs/uamishop-catalogo/src/main/java/com/uamishop/catalogo/controller/ProductoController.java
+
 package com.uamishop.catalogo.controller;
 
 import com.uamishop.catalogo.controller.dto.ProductoEstadisticasResponse;

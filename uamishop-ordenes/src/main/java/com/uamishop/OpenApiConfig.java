@@ -1,3 +1,5 @@
+// Archivo: /workspaces/Los-Animaniacs/uamishop-ordenes/src/main/java/com/uamishop/OpenApiConfig.java
+
 package com.uamishop;
 
 import org.springframework.context.annotation.Bean;

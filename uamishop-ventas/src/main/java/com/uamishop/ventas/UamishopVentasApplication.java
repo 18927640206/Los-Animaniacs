@@ -1,3 +1,5 @@
+// Archivo: /workspaces/Los-Animaniacs/uamishop-ventas/src/main/java/com/uamishop/ventas/UamishopVentasApplication.java
+
 package com.uamishop.ventas;
 
 import org.springframework.boot.SpringApplication;

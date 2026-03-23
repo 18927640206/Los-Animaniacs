@@ -1,3 +1,5 @@
+// Archivo: /workspaces/Los-Animaniacs/uamishop-catalogo/src/main/java/com/uamishop/catalogo/service/CategoriaService.java
+
 package com.uamishop.catalogo.service;
 
 import com.uamishop.catalogo.controller.dto.CategoriaRequest;

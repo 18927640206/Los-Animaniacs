@@ -1,3 +1,5 @@
+// Archivo: /workspaces/Los-Animaniacs/uamishop-ventas/src/main/java/com/uamishop/ventas/controller/CarritoController.java
+
 package com.uamishop.ventas.controller;
 
 import com.uamishop.ventas.api.CarritoResumen;

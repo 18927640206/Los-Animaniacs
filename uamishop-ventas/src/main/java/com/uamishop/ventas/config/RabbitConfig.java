@@ -1,3 +1,5 @@
+// Archivo: /workspaces/Los-Animaniacs/uamishop-ventas/src/main/java/com/uamishop/ventas/config/RabbitConfig.java
+
 package com.uamishop.ventas.config;
 
 import org.springframework.amqp.core.Binding;

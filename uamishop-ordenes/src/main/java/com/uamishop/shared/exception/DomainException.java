@@ -1,3 +1,5 @@
+// Archivo: /workspaces/Los-Animaniacs/uamishop-ordenes/src/main/java/com/uamishop/shared/exception/DomainException.java
+
 package com.uamishop.shared.exception;
 
 /**

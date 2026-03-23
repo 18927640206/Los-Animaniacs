@@ -1,3 +1,5 @@
+// Archivo: /workspaces/Los-Animaniacs/uamishop-ordenes/src/main/java/com/uamishop/ordenes/controller/OrdenController.java
+
 package com.uamishop.ordenes.controller;
 
 import com.uamishop.ordenes.controller.dto.CrearOrdenRequest;

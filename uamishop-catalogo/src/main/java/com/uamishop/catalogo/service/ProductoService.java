@@ -1,3 +1,5 @@
+// Archivo: /workspaces/Los-Animaniacs/uamishop-catalogo/src/main/java/com/uamishop/catalogo/service/ProductoService.java
+
 package com.uamishop.catalogo.service;
 
 //import com.uamishop.catalogo.api.CatalogoApi;

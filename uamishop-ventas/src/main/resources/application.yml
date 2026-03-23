@@ -1,3 +1,5 @@
+# Archivo: /workspaces/Los-Animaniacs/uamishop-ventas/src/main/resources/application.yml
+
 server:
   port: 8082
 

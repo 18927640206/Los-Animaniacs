@@ -1,3 +1,5 @@
+// Archivo: /workspaces/Los-Animaniacs/uamishop-catalogo/src/main/java/com/uamishop/catalogo/shared/exception/GlobalExceptionHandler.java
+
 package com.uamishop.catalogo.shared.exception;
 
 import com.uamishop.catalogo.shared.api.ApiError;

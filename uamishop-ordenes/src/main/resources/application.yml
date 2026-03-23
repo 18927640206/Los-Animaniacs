@@ -1,14 +1,13 @@
-# Archivo: /workspaces/Los-Animaniacs/uamishop-catalogo/src/main/resources/application.yml
+# Archivo: /workspaces/Los-Animaniacs/uamishop-ordenes/src/main/resources/application.yml
 
 server:
-  port: 8081
-
+  port: 8083
 
 spring:
   application:
-    name: uamishop-catalogo
+    name: uamishop-ordenes
   datasource:
-    url: jdbc:mysql://mysql:3306/uamishop_catalogo?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://mysql:3306/uamishop_ordenes?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: uamishop
     password: uamishop
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -18,14 +17,13 @@ spring:
     show-sql: true
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
-        default_schema: catalogo
   rabbitmq:
     host: rabbitmq
     port: 5672
     username: guest
     password: guest
-
 
 springdoc:
   api-docs:

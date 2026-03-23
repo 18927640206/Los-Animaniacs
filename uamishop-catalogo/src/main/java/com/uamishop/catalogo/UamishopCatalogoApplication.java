@@ -1,3 +1,5 @@
+// Archivo: /workspaces/Los-Animaniacs/uamishop-catalogo/src/main/java/com/uamishop/catalogo/UamishopCatalogoApplication.java
+
 package com.uamishop.catalogo;
 
 /*ES IMPORTANTE YA QUE PARA PODER HACER LO DE LA P4 REQUERIAMOS DE SPRINGBOOT. 

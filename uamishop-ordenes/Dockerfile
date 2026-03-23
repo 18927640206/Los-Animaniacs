@@ -1,3 +1,5 @@
+# Archivo: /workspaces/Los-Animaniacs/uamishop-ordenes/Dockerfile
+
 # Etapa 1: Construcción (Builder)
 # Usar la imagen de Maven con JDK 17 como base para la etapa de construcción, nombrada 'builder' para multi-stage build
 FROM maven:3.9-eclipse-temurin-17 AS builder

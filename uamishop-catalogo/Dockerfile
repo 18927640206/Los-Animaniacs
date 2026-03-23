@@ -1,3 +1,5 @@
+# Archivo: /workspaces/Los-Animaniacs/uamishop-catalogo/Dockerfile
+
 # Etapa 1: Construcción (Builder)
 FROM maven:3.9-eclipse-temurin-17 AS builder
 WORKDIR /app
