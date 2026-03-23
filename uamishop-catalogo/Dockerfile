@@ -1,13 +1,19 @@
-# Usar una imagen base de OpenJDK 17
-FROM openjdk:17-jdk-slim
-
-# Crear directorio de trabajo dentro del contenedor
+# Etapa 1: Construcción (Builder)
+FROM maven:3.9-eclipse-temurin-17 AS builder
 WORKDIR /app
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
+COPY src ./src
+RUN mvn package -DskipTests -B
 
-# Copiar el archivo JAR generado por Maven
-COPY target/uamishop-catalogo-*.jar app.jar
-
-# Exponer el puerto que usa el microservicio (8081 en application.yml)
+# Etapa 2: Ejecución (Runtime)
+FROM eclipse-temurin:17-jre
+WORKDIR /app
+# Seguridad: No ejecutar como root
+RUN groupadd -g 1001 appgroup && useradd -u 1001 -g appgroup -m appuser
+USER appuser
+# Copiar el JAR compilado desde la etapa 'builder'
+COPY --from=builder /app/target/*.jar app.jar
+# Exponer el puerto 8081 (según la práctica para el catálogo)
 EXPOSE 8081
-
 ENTRYPOINT ["java", "-jar", "app.jar"]

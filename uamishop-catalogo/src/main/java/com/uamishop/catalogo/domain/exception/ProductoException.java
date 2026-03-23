@@ -1,0 +1,1 @@
+package com.uamishop.catalogo.domain.exception;

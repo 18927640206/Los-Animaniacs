@@ -1,4 +1,4 @@
-package com.uamishop.shared.event;
+package com.uamishop.catalogo.shared.event;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -17,7 +17,6 @@ public record ProductoCompradoEvent(
     UUID clienteId,
     List<ItemComprado> items
 ) {
-
     public record ItemComprado(
         UUID productoId,
         String sku,
