@@ -1,12 +1,11 @@
 server:
-  port: 8081
-
+  port: 8082
 
 spring:
   application:
-    name: uamishop-catalogo
+    name: uamishop-ventas
   datasource:
-    url: jdbc:mysql://mysql:3306/uamishop_catalogo?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://mysql:3306/uamishop_ventas?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: uamishop
     password: uamishop
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -17,16 +16,9 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        default_schema: catalogo
+        default_schema: ventas
   rabbitmq:
     host: rabbitmq
     port: 5672
     username: guest
     password: guest
-
-
-springdoc:
-  api-docs:
-    path: /api-docs
-  swagger-ui:
-    path: /swagger-ui.html
