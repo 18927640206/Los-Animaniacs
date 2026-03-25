@@ -29,7 +29,7 @@ USER appuser
 # Traer solo el JAR generado
 # Copiar el JAR compilado desde la etapa 'builder' a la imagen final, renombrándolo a app.jar
 COPY --from=builder /app/target/*.jar app.jar
-# Exponer el puerto 8080 para que la aplicación sea accesible desde fuera del contenedor
-EXPOSE 8080
+# Exponer el puerto 8083 para que la aplicación sea accesible desde fuera del contenedor
+EXPOSE 8083
 # Definir el punto de entrada para ejecutar la aplicación Java
 ENTRYPOINT ["java", "-jar", "app.jar"]

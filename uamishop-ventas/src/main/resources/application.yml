@@ -2,6 +2,9 @@
 
 server:
   port: 8082
+  error:
+    include-message: always #importante para que se vea el mensaje de error 503
+    include-binding-errors: always
 
 spring:
   application:
@@ -24,3 +27,17 @@ spring:
     port: 5672
     username: guest
     password: guest
+
+#configuracion de cortador: define cuando debe "abrirse" el circuito(dejar de intentar llamar al servicio caido)
+resilience4j:
+  circuitbreaker:
+    instances:
+      catalogoCB:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowType: COUNT_BASED
+        minimumNumberOfCalls: 5
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10

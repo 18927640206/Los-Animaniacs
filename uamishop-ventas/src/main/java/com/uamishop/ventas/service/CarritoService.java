@@ -2,6 +2,12 @@
 
 package com.uamishop.ventas.service;
 
+
+//agregadas para el paso 1 de la practica 9:
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.uamishop.ventas.api.VentasApi;
 import com.uamishop.ventas.api.CarritoResumen;
 import com.uamishop.ventas.api.ItemCarritoResumen;
@@ -73,7 +79,10 @@ public class CarritoService implements VentasApi {
             .orElseThrow(() -> new RuntimeException("Carrito no encontrado"));
     }
 
+    //Aqui es donde se aplica lo del metodo de soporte para que no caiga el sistema. Paso1-P9
     @Transactional
+    // 1. Agregamos el CircuitBreaker. El nombre debe ser el mismo que en la application.yml
+    @CircuitBreaker(name = "catalogoCB", fallbackMethod = "fallbackCatalogo")
     public Carrito agregarItem(UUID carritoId, ProductoRef producto, int cantidad, Money precioUnitario) {
         Carrito carrito = obtenerCarrito(carritoId);
         carrito.agregarProducto(producto, cantidad, precioUnitario);
@@ -91,6 +100,18 @@ public class CarritoService implements VentasApi {
 
         return carritoGuardado;
     }
+
+    // 2. Método de Fallback (Plan B)
+    // Importante: Debe tener los mismos parámetros que agregarItem + el Throwable
+    //sirve para que en lugar de que salga el error 503 se da una respuesta simplificada.
+    public Carrito fallbackCatalogo(UUID carritoId, ProductoRef producto, int cantidad, Money precioUnitario, Throwable t) {
+        // Lanzamos el error 503 con el mensaje exacto que pide la práctica
+        throw new ResponseStatusException(
+            HttpStatus.SERVICE_UNAVAILABLE, 
+            "Servicio de catálogo no disponible temporalmente"
+        );
+    }
+
 
     @Transactional
     public Carrito actualizarCantidad(UUID carritoId, String productoIdStr, int nuevaCantidad) {

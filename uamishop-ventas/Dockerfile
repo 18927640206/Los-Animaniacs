@@ -17,5 +17,6 @@ USER appuser
 # Copiar el JAR compilado desde la etapa 'builder'
 COPY --from=builder /app/target/*.jar app.jar
 # Exponer el puerto 8081 (según la práctica para el catálogo)
-EXPOSE 8081
+EXPOSE 8082 
+#Correccion linea 20, tenia que ser 8082 sino causa un conflicto de puertos
 ENTRYPOINT ["java", "-jar", "app.jar"]
