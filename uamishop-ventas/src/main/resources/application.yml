@@ -10,7 +10,7 @@ spring:
   application:
     name: uamishop-ventas
   datasource:
-    url: jdbc:mysql://mysql:3306/uamishop_ventas?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/uamishop_ventas?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: uamishop
     password: uamishop
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -23,7 +23,7 @@ spring:
         format_sql: true
         default_schema: ventas
   rabbitmq:
-    host: rabbitmq
+    host: localhost
     port: 5672
     username: guest
     password: guest
