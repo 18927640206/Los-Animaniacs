@@ -6,6 +6,7 @@ server:
 spring:
   application:
     name: uamishop-ordenes
+  # configuracion por defecto para Codespaces
   datasource:
     url: jdbc:mysql://localhost:3306/uamishop_ordenes?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: uamishop
@@ -44,3 +45,15 @@ resilience4j:
         waitDurationInOpenState: 10s
         failureRateThreshold: 50
         eventConsumerBufferSize: 10
+
+---
+# configuracion para perfil de docker
+# Se activa con: mvn spring-boot:run -Dspring-boot.run.profiles=docker
+spring:
+  config:
+    activate:
+      on-profile: docker
+  datasource:
+    url: jdbc:mysql://mysql:3306/uamishop_ordenes?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+  rabbitmq:
+    host: rabbitmq

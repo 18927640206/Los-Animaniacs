@@ -7,6 +7,7 @@ server:
 spring:
   application:
     name: uamishop-catalogo
+  # configuracion por defecto Codespaces
   datasource:
     url: jdbc:mysql://localhost:3306/uamishop_catalogo?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: uamishop
@@ -32,3 +33,15 @@ springdoc:
     path: /api-docs
   swagger-ui:
     path: /swagger-ui.html
+
+---
+# configuracion para perfil de docker
+# Se activa con: mvn spring-boot:run -Dspring-boot.run.profiles=docker
+spring:
+  config:
+    activate:
+      on-profile: docker
+  datasource:
+    url: jdbc:mysql://mysql:3306/uamishop_catalogo?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+  rabbitmq:
+    host: rabbitmq
