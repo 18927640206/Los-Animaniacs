@@ -11,9 +11,11 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableAsync
+@EnableScheduling
 @EntityScan(basePackages = {"com.uamishop.ordenes", "com.uamishop.shared", "com.uamishop.ventas", "com.uamishop.catalogo"})
 public class UamishopOrdenesApplication {
 
