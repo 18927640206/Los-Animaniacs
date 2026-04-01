@@ -1,0 +1,101 @@
+server:
+  port: 8080  # Puerto del API Gateway
+
+spring:
+  application:
+    name: uamishop-gateway
+  
+  cloud:
+    gateway:
+      routes:
+        # Ruta para el microservicio de catálogo
+        - id: catalogo-service
+          uri: http://localhost:8081  # O lb://uamishop-catalogo 
+          predicates:
+            - Path=/api/v1/catalogo/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: catalogoService
+                fallbackUri: forward:/fallback/catalogo
+            - name: Retry
+              args:
+                retries: 3
+                statuses: INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE
+                methods: GET, POST
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@userKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+        
+        # Ruta para el microservicio de órdenes
+        - id: ordenes-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/v1/ordenes/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: ordenesService
+                fallbackUri: forward:/fallback/ordenes
+        
+        # Ruta para el microservicio de ventas
+        - id: ventas-service
+          uri: http://localhost:8083
+          predicates:
+            - Path=/api/v1/ventas/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: ventasService
+                fallbackUri: forward:/fallback/ventas
+        
+        # Ruta para carritos (probablemente parte de ventas)
+        - id: carritos-service
+          uri: http://localhost:8083
+          predicates:
+            - Path=/api/v1/carritos/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: carritosService
+                fallbackUri: forward:/fallback/carritos
+
+# Configuración de Resilience4J para el gateway
+resilience4j:
+  circuitbreaker:
+    instances:
+      catalogoService:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10000
+        permittedNumberOfCallsInHalfOpenState: 5
+      ordenesService:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10000
+      ventasService:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10000
+      carritosService:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10000
+
+# Configuración de Eureka
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    hostname: localhost
+
+# Configuración de logs
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    reactor.netty: DEBUG
