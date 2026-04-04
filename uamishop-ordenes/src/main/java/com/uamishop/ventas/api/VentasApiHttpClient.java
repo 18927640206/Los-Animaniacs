@@ -1,3 +1,4 @@
+// uamishop-ordenes/src/main/java/com/uamishop/ventas/api/VentasApiHttpClient.java
 package com.uamishop.ventas.api;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -18,7 +19,7 @@ public class VentasApiHttpClient implements VentasApi {
     private final String ventasBaseUrl;
 
     public VentasApiHttpClient(RestTemplate restTemplate,
-                               @Value("${ventas.service.url:http://localhost:8082}") String ventasBaseUrl) {
+        @Value("${ventas.service.url:http://localhost:8082}") String ventasBaseUrl) {
         this.restTemplate = restTemplate;
         this.ventasBaseUrl = ventasBaseUrl;
     }

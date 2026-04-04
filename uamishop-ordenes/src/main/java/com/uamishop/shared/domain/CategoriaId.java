@@ -1,3 +1,4 @@
+// uamishop-ordenes/src/main/java/com/uamishop/shared/domain/CategoriaId.java
 /*package com.uamishop.catalogo.domain;
 
 import jakarta.persistence.Embeddable;

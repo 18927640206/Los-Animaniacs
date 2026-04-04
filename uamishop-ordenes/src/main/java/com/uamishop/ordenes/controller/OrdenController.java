@@ -1,4 +1,4 @@
-// Archivo: /workspaces/Los-Animaniacs/uamishop-ordenes/src/main/java/com/uamishop/ordenes/controller/OrdenController.java
+// uamishop-ordenes/src/main/java/com/uamishop/ordenes/controller/OrdenController.java
 
 package com.uamishop.ordenes.controller;
 

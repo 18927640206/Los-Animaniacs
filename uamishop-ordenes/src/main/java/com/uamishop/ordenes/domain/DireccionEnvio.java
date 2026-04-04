@@ -1,3 +1,4 @@
+// uamishop-ordenes/src/main/java/com/uamishop/ordenes/domain/DireccionEnvio.java
 package com.uamishop.ordenes.domain;
 
 import jakarta.persistence.Embeddable;

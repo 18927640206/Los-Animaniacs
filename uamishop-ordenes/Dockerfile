@@ -1,4 +1,4 @@
-# Archivo: /workspaces/Los-Animaniacs/uamishop-ordenes/Dockerfile
+# uamishop-ordenes/Dockerfile
 
 # Etapa 1: Construcción (Builder)
 # Usar la imagen de Maven con JDK 17 como base para la etapa de construcción, nombrada 'builder' para multi-stage build

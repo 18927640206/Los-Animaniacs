@@ -1,3 +1,4 @@
+// uamishop-ordenes/src/main/java/com/uamishop/ordenes/domain/InfoPago.java
 package com.uamishop.ordenes.domain;
 import java.time.LocalDateTime;
 

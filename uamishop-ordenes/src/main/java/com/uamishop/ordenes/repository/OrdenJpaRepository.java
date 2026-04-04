@@ -1,3 +1,4 @@
+// uamishop-ordenes/src/main/java/com/uamishop/ordenes/repository/OrdenJpaRepository.java
 package com.uamishop.ordenes.repository;
 
 import com.uamishop.ordenes.domain.Orden;

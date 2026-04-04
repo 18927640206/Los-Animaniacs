@@ -1,3 +1,4 @@
+// uamishop-ordenes/src/main/java/com/uamishop/ordenes/domain/EstadoOrden.java
 package com.uamishop.ordenes.domain;
 
 public enum EstadoOrden {

@@ -1,3 +1,4 @@
+// uamishop-ordenes/src/main/java/com/uamishop/shared/api/ApiError.java
 package com.uamishop.shared.api;
 
 import com.fasterxml.jackson.annotation.JsonFormat;

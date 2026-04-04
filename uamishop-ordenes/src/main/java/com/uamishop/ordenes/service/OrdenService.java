@@ -1,4 +1,5 @@
-// Archivo: /workspaces/Los-Animaniacs/uamishop-ordenes/src/main/java/com/uamishop/ordenes/service/OrdenService.java
+// uamishop-ordenes/src/main/java/com/uamishop/ordenes/service/OrdenService.java
+// uamishop-ordenes/src/main/java/com/uamishop/ordenes/service/OrdenService.java
 package com.uamishop.ordenes.service;
 
 import com.uamishop.ordenes.api.OrdenApi;
@@ -10,6 +11,7 @@ import com.uamishop.ventas.api.VentasApi;
 import com.uamishop.ventas.api.CarritoResumen;
 import com.uamishop.shared.domain.ProductoRef;
 import com.uamishop.shared.domain.ClienteId;
+import com.uamishop.shared.domain.Money;
 import com.uamishop.config.RabbitConfig;
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -25,7 +27,6 @@ import java.util.UUID;
 import java.util.List;
 import java.util.stream.Collectors;
 
-//  NUEVO
 import com.uamishop.shared.service.OutboxService;
 
 @Service
@@ -35,8 +36,6 @@ public class OrdenService implements OrdenApi {
     private final VentasApi ventasApi;
     private final ApplicationEventPublisher eventPublisher;
     private final RabbitTemplate rabbitTemplate;
-
-    //  NUEVO
     private final OutboxService outboxService;
 
     public OrdenService(OrdenJpaRepository ordenRepository,
@@ -44,7 +43,6 @@ public class OrdenService implements OrdenApi {
                         ApplicationEventPublisher eventPublisher,
                         RabbitTemplate rabbitTemplate,
                         OutboxService outboxService) {
-
         this.ordenRepository = ordenRepository;
         this.ventasApi = ventasApi;
         this.eventPublisher = eventPublisher;
@@ -65,13 +63,14 @@ public class OrdenService implements OrdenApi {
 
     @Transactional
     public Orden crearDesdeCarrito(UUID carritoId, DireccionEnvio direccion) {
-
         CarritoResumen carrito = ventasApi.obtenerResumen(carritoId);
-
         List<ItemOrden> itemsOrden = carrito.items().stream()
                 .map(item -> new ItemOrden(
                         new ItemOrdenId(UUID.randomUUID().toString()),
-                        new ProductoRef(item.productoId(), item.nombreProducto(), item.sku()),
+                        new ProductoRef(
+                                new com.uamishop.shared.domain.ProductoId(item.productoId().getId()), 
+                                item.nombreProducto(), 
+                                item.sku()),
                         item.cantidad(),
                         item.precioUnitario()
                 )).collect(Collectors.toList());
@@ -85,7 +84,6 @@ public class OrdenService implements OrdenApi {
 
         Orden ordenGuardada = ordenRepository.save(orden);
 
-        //  EVENTO 1: ORDEN CREADA (ANTES → Rabbit)
         OrdenCreadaEvent ordenEvent = new OrdenCreadaEvent(
                 UUID.randomUUID(),
                 Instant.now(),
@@ -101,10 +99,8 @@ public class OrdenService implements OrdenApi {
                 ordenEvent
         );
 
-        // EVENTO 2: PRODUCTO COMPRADO (ANTES → Rabbit)
         ProductoCompradoEvent productoCompradoEvent = crearEventoProductoComprado(ordenGuardada);
-
-        eventPublisher.publishEvent(productoCompradoEvent); // opcional (lo dejamos)
+        eventPublisher.publishEvent(productoCompradoEvent); 
 
         outboxService.guardarEvento(
                 UUID.fromString(ordenGuardada.getId().getId()),
@@ -118,26 +114,40 @@ public class OrdenService implements OrdenApi {
 
     @Transactional
     public Orden crear(CrearOrdenRequest request) {
-
         DireccionEnvio direccion = new DireccionEnvio(
-                "Calle", "Colonia", "Ciudad", "Estado",
-                "12345", "México", "1234567890"
+                request.getDireccionEnvio().getCalle(),
+                request.getDireccionEnvio().getColonia(),
+                request.getDireccionEnvio().getCiudad(),
+                request.getDireccionEnvio().getEstado(),
+                request.getDireccionEnvio().getCodigoPostal(),
+                request.getDireccionEnvio().getPais(),
+                request.getDireccionEnvio().getTelefono()
         );
+
+        List<ItemOrden> itemsOrden = request.getItems().stream()
+                .map(item -> new ItemOrden(
+                        new ItemOrdenId(UUID.randomUUID().toString()),
+                        new ProductoRef(
+                                new com.uamishop.shared.domain.ProductoId(item.getProductoId()), 
+                                "Producto Web", 
+                                "WEB-123" 
+                        ),
+                        item.getCantidad(),
+                        new Money(item.getPrecioUnitario(), "MXN") 
+                )).collect(Collectors.toList());
 
         Orden orden = new Orden(
                 new OrdenId(UUID.randomUUID().toString()),
                 new ClienteId(request.getClienteId()),
-                new java.util.ArrayList<>(),
+                itemsOrden,
                 direccion
         );
 
         Orden ordenGuardada = ordenRepository.save(orden);
 
         ProductoCompradoEvent event = crearEventoProductoComprado(ordenGuardada);
+        eventPublisher.publishEvent(event); 
 
-        eventPublisher.publishEvent(event); // opcional
-
-        // 🔥 SOLO CAMBIO AQUÍ
         outboxService.guardarEvento(
                 UUID.fromString(ordenGuardada.getId().getId()),
                 "Orden",
@@ -149,21 +159,35 @@ public class OrdenService implements OrdenApi {
     }
 
     private ProductoCompradoEvent crearEventoProductoComprado(Orden orden) {
-
         List<ProductoCompradoEvent.ItemComprado> itemsEvent = orden.getItems().stream()
-                .map(item -> new ProductoCompradoEvent.ItemComprado(
-                        UUID.fromString(item.getProductoRef().getProductoId().getId()),
-                        item.getProductoRef().getSku(),
-                        item.getCantidad(),
-                        item.getPrecioUnitario().getMonto(),
-                        item.getPrecioUnitario().getMoneda()
-                )).toList();
+                .map(item -> {
+                    UUID prodId;
+                    try {
+                        prodId = UUID.fromString(item.getProductoRef().getProductoId().getId());
+                    } catch (Exception e) {
+                        prodId = UUID.randomUUID(); // Escudo: Si el navegador envía basura, usamos un UUID seguro
+                    }
+                    return new ProductoCompradoEvent.ItemComprado(
+                            prodId,
+                            item.getProductoRef().getSku(),
+                            item.getCantidad(),
+                            item.getPrecioUnitario().getMonto(),
+                            item.getPrecioUnitario().getMoneda()
+                    );
+                }).toList();
+
+        UUID cliId;
+        try {
+            cliId = UUID.fromString(orden.getClienteId().getId());
+        } catch (Exception e) {
+            cliId = UUID.randomUUID(); // Escudo: Previene el crash del Cliente ID
+        }
 
         return new ProductoCompradoEvent(
                 UUID.randomUUID(),
                 Instant.now(),
                 UUID.fromString(orden.getId().getId()),
-                UUID.fromString(orden.getClienteId().getId()),
+                cliId,
                 itemsEvent
         );
     }

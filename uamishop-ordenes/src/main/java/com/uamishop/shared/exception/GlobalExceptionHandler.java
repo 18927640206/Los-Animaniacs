@@ -1,4 +1,4 @@
-// Archivo: /workspaces/Los-Animaniacs/uamishop-ordenes/src/main/java/com/uamishop/shared/exception/GlobalExceptionHandler.java
+// uamishop-ordenes/src/main/java/com/uamishop/shared/exception/GlobalExceptionHandler.java
 
 package com.uamishop.shared.exception;
 

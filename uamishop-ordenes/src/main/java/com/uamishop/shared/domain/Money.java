@@ -1,3 +1,4 @@
+// uamishop-ordenes/src/main/java/com/uamishop/shared/domain/Money.java
 package com.uamishop.shared.domain;
 
 import jakarta.persistence.Embeddable;

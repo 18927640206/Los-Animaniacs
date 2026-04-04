@@ -1,3 +1,4 @@
+// uamishop-ordenes/src/main/java/com/uamishop/ordenes/controller/dto/ItemOrdenResponse.java
 package com.uamishop.ordenes.controller.dto;
 
 import java.math.BigDecimal;

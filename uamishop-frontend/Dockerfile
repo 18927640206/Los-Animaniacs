@@ -3,3 +3,4 @@ FROM nginx:alpine
 COPY . /usr/share/nginx/html
 # Exponemos el puerto 80 que es el estándar de web
 EXPOSE 80
+#uamishop-frontend/Dockerfile

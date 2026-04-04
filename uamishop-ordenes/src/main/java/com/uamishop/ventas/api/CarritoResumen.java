@@ -1,3 +1,4 @@
+// uamishop-ordenes/src/main/java/com/uamishop/ventas/api/CarritoResumen.java
 package com.uamishop.ventas.api;
 
 import com.uamishop.shared.domain.ClienteId;

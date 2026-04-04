@@ -1,3 +1,4 @@
+// uamishop-ordenes/src/main/java/com/uamishop/shared/service/OutboxPublisher.java
 package com.uamishop.shared.service;
 
 import com.uamishop.shared.domain.OutboxEvent;

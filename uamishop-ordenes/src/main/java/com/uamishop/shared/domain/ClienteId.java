@@ -1,3 +1,4 @@
+// uamishop-ordenes/src/main/java/com/uamishop/shared/domain/ClienteId.java
 package com.uamishop.shared.domain;
 
 import jakarta.persistence.Embeddable; // Importante

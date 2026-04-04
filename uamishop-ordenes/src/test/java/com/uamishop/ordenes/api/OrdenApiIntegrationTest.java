@@ -1,3 +1,4 @@
+// uamishop-ordenes/src/test/java/com/uamishop/ordenes/api/OrdenApiIntegrationTest.java
 package com.uamishop.ordenes.api;
 
 import com.uamishop.ordenes.domain.*;

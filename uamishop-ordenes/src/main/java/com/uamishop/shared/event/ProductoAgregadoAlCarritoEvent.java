@@ -1,3 +1,4 @@
+// uamishop-ordenes/src/main/java/com/uamishop/shared/event/ProductoAgregadoAlCarritoEvent.java
 package com.uamishop.shared.event;
 
 import java.math.BigDecimal;

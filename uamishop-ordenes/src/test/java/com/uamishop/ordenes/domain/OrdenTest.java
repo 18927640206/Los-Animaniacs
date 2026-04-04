@@ -1,3 +1,4 @@
+// uamishop-ordenes/src/test/java/com/uamishop/ordenes/domain/OrdenTest.java
 package com.uamishop.ordenes.domain;
 
 import com.uamishop.shared.domain.Money;

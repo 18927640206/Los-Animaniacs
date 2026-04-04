@@ -1,4 +1,4 @@
-// Archivo: /workspaces/Los-Animaniacs/uamishop-ordenes/src/main/java/com/uamishop/OpenApiConfig.java
+// uamishop-ordenes/src/main/java/com/uamishop/OpenApiConfig.java
 
 package com.uamishop;
 

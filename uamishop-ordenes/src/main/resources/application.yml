@@ -1,4 +1,4 @@
-# Archivo: /workspaces/Los-Animaniacs/uamishop-ordenes/src/main/resources/application.yml
+# uamishop-ordenes/src/main/resources/application.yml
 
 server:
   port: 8083
@@ -57,3 +57,6 @@ spring:
     url: jdbc:mysql://mysql:3306/uamishop_ordenes?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
   rabbitmq:
     host: rabbitmq
+ventas:
+  service:
+    url: http://uamishop-ventas:8082

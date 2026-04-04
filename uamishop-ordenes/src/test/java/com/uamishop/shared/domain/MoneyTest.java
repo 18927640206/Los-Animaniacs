@@ -1,3 +1,4 @@
+// uamishop-ordenes/src/test/java/com/uamishop/shared/domain/MoneyTest.java
 package com.uamishop.shared.domain;
 
 import org.junit.jupiter.api.Test;
