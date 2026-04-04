@@ -6,7 +6,6 @@ import com.uamishop.catalogo.controller.dto.CategoriaRequest;
 import com.uamishop.catalogo.controller.dto.CategoriaResponse;
 import com.uamishop.catalogo.controller.dto.ProductoResponse;
 import com.uamishop.catalogo.service.CategoriaService;
-//import com.uamishop.shared.api.ApiError;
 import com.uamishop.catalogo.shared.api.ApiError;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.headers.Header;

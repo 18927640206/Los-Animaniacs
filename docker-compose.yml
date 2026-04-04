@@ -14,7 +14,7 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      # IMPORTANTE: Este script debe crear las 3 bases de datos (ver nota abajo)
+      # IMPORTANTE: Este script debe crear las 3 bases de datos
       - ./docker/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
@@ -97,7 +97,6 @@ services:
       SPRING_DATASOURCE_USERNAME: uamishop
       SPRING_DATASOURCE_PASSWORD: uamishop
       SPRING_RABBITMQ_HOST: rabbitmq
-      # URLs para comunicación síncrona vía REST
       CATALOGO_SERVICE_URL: "http://uamishop-catalogo:8081"
       VENTAS_SERVICE_URL: "http://uamishop-ventas:8082"
       JAVA_OPTS: "-Xmx256m -Xms128m"
@@ -110,5 +109,31 @@ services:
           memory: 512M
     restart: unless-stopped
 
+  uamishop-gateway:
+    build:
+      context: ./uamishop-gateway
+      dockerfile: Dockerfile
+    image: uamishop-gateway:latest
+    container_name: uamishop-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      JAVA_OPTS: "-Xmx256m -Xms128m"
+    depends_on:
+      - uamishop-catalogo
+      - uamishop-ventas
+      - uamishop-ordenes
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    restart: unless-stopped
+  uamishop-web:
+      build: ./uamishop-frontend
+      container_name: uamishop-web
+      ports:
+        - "3000:80"
+
 volumes:
   mysql_data:
+

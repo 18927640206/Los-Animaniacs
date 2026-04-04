@@ -7,34 +7,37 @@ spring:
   
   cloud:
     gateway:
+      globalcors: # Practica 9 - Configuración global de CORS para permitir solicitudes desde cualquier origen
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
       routes:
         # Ruta para el microservicio de catálogo
         - id: catalogo-service
-          uri: http://localhost:8081  # O lb://uamishop-catalogo 
+          uri: http://uamishop-catalogo:8081  # Practica 9 - Usamos el nombre del servicio definido en docker-compose para resolverlo a través de Docker DNS 
           predicates:
             - Path=/api/v1/catalogo/**
           filters:
+            - RewritePath=/api/v1/catalogo/(?<segment>.*), /api/v2/$\{segment}
             - name: CircuitBreaker
               args:
                 name: catalogoService
                 fallbackUri: forward:/fallback/catalogo
-            - name: Retry
-              args:
-                retries: 3
-                statuses: INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE
-                methods: GET, POST
-            - name: RequestRateLimiter
-              args:
-                key-resolver: "#{@userKeyResolver}"
-                redis-rate-limiter.replenishRate: 10
-                redis-rate-limiter.burstCapacity: 20
         
         # Ruta para el microservicio de órdenes
         - id: ordenes-service
-          uri: http://localhost:8082
+          uri: http://uamishop-ordenes:8083 # Practica 9 - Usamos el nombre del servicio definido en docker-compose para resolverlo a través de Docker DNS
           predicates:
             - Path=/api/v1/ordenes/**
           filters:
+            - RewritePath=/api/v1/ordenes/(?<segment>.*), /api/v2/ordenes/$\{segment}
             - name: CircuitBreaker
               args:
                 name: ordenesService
@@ -42,10 +45,11 @@ spring:
         
         # Ruta para el microservicio de ventas
         - id: ventas-service
-          uri: http://localhost:8083
+          uri: http://uamishop-ventas:8082 # Practica 9 - Usamos el nombre del servicio definido en docker-compose para resolverlo a través de Docker DNS
           predicates:
             - Path=/api/v1/ventas/**
           filters:
+            - RewritePath=/api/v1/ventas/(?<segment>.*), /api/v2/ventas/$\{segment}
             - name: CircuitBreaker
               args:
                 name: ventasService
@@ -53,10 +57,11 @@ spring:
         
         # Ruta para carritos (probablemente parte de ventas)
         - id: carritos-service
-          uri: http://localhost:8083
+          uri: http://uamishop-ventas:8082 # Practica 9 - Usamos el nombre del servicio definido en docker-compose para resolverlo a través de Docker DNS
           predicates:
             - Path=/api/v1/carritos/**
           filters:
+            - RewritePath=/api/v1/carritos/(?<segment>.*), /api/v2/carritos/$\{segment}
             - name: CircuitBreaker
               args:
                 name: carritosService
@@ -83,16 +88,6 @@ resilience4j:
         slidingWindowSize: 10
         failureRateThreshold: 50
         waitDurationInOpenState: 10000
-
-# Configuración de Eureka
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-    fetch-registry: true
-    register-with-eureka: true
-  instance:
-    hostname: localhost
 
 # Configuración de logs
 logging:

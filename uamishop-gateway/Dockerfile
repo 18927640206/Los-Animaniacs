@@ -1,5 +1,14 @@
-FROM openjdk:17-jdk-slim
-COPY target/uamishop-gateway-1.0.0.jar app.jar
+# uamishop-gateway/Dockerfile
+# Dockerfile para el microservicio de gateway
+FROM maven:3.9-eclipse-temurin-17 AS build
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
+# Etapa de ejecución
+FROM eclipse-temurin:17-jdk-jammy
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "/app.jar"]
-uamishop-gateway/scr/main
+ENTRYPOINT ["java", "-jar", "app.jar"]
+

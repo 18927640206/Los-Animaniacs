@@ -1,0 +1,13 @@
+{
+  "forwardPorts": [3000, 8080],
+  "portsAttributes": {
+    "3000": {
+      "label": "Frontend uamishop",
+      "visibility": "public"
+    },
+    "8080": {
+      "label": "API Gateway",
+      "visibility": "public"
+    }
+  }
+}

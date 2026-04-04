@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UAMiShop - Panel Pro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>🛒 UAMiShop - Flujo Completo</h1>
+    
+    <div class="config-panel">
+        <label><strong>URL de tu API Gateway (Puerto 8080):</strong></label>
+        <input type="text" id="gatewayUrl" placeholder="Ej: https://...-8080.app.github.dev" value="">
+        
+        <div class="btn-group">
+            <button class="btn-cat" onclick="listarCategorias()">1. Ver Catálogo</button>
+            <button class="btn-cart" onclick="crearCarrito()">2. Crear Carrito</button>
+            <button class="btn-order" onclick="crearOrden()">3. Pagar (Crear Orden)</button>
+        </div>
+    </div>
+
+    <h3>Consola de Operaciones:</h3>
+    <div class="log-box" id="consola">
+        Esperando acciones...
+    </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

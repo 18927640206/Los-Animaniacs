@@ -1,0 +1,12 @@
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
+.container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+h1 { color: #2c3e50; text-align: center; }
+.config-panel { background: #ecf0f1; padding: 15px; border-radius: 6px; margin-bottom: 20px; }
+input[type="text"] { width: 100%; padding: 10px; margin-top: 5px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+.btn-group { display: flex; gap: 10px; margin-top: 15px; }
+button { flex: 1; color: white; border: none; padding: 12px; cursor: pointer; border-radius: 4px; font-weight: bold;}
+.btn-cat { background-color: #3498db; }
+.btn-cart { background-color: #f39c12; }
+.btn-order { background-color: #27ae60; }
+button:hover { opacity: 0.9; }
+.log-box { background: #2c3e50; color: #2ecc71; padding: 15px; border-radius: 4px; margin-top: 20px; font-family: monospace; overflow-y: auto; max-height: 300px; }
