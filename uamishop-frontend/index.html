@@ -3,29 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UamiShop - E-commerce</title>
-    <link rel="stylesheet" href="style.css">
+    <title>UamiShop - Tienda Oficial</title>
+    <link rel="stylesheet" href="style.css?v=2.0">
 </head>
 <body>
 
     <nav class="navbar">
-        <div>🛒 UamiShop</div>
+        <div class="logo-brand">
+            <img src="Logo.png" alt="UamiShop Logo" class="navbar-logo">
+            <span class="brand-name">UamiShop</span>
+        </div>
         <div class="gateway-config">
-            <span>Gateway URL:</span>
+            <span style="color: #ccc;">Gateway:</span>
             <input type="text" id="gatewayUrl" value="http://localhost:8080" />
         </div>
     </nav>
 
     <div class="container">
         <main>
-            <h2 style="margin-top:0;">Catálogo de Productos</h2>
+            <div class="header-seccion">
+                <h2 style="margin:0; color: #006847;">Catálogo de Productos</h2>
+                <p style="color: #666; margin: 5px 0 20px 0;">Selecciona tus artículos oficiales de la Pantera Negra</p>
+            </div>
             <div class="grid-productos" id="catalogo">
                 </div>
         </main>
 
         <aside class="panel-lateral">
             <div class="panel-card">
-                <h2>Tu Carrito</h2>
+                <h2>🛒 Tu Carrito</h2>
                 <div id="listaCarrito">
                     <p style="color: gray; font-style: italic;">El carrito está vacío</p>
                 </div>
@@ -33,7 +39,7 @@
             </div>
 
             <div class="panel-card">
-                <h2>Datos de Envío</h2>
+                <h2>📍 Datos de Envío</h2>
                 <div class="formulario-envio">
                     <input type="text" id="inputCalle" placeholder="Calle y número" value="Av. Universidad 123">
                     <input type="text" id="inputColonia" placeholder="Colonia" value="Iztapalapa">
@@ -42,16 +48,17 @@
                         <input type="text" id="inputEstado" placeholder="Estado" value="CDMX">
                     </div>
                     <div style="display: flex; gap:10px;">
-                        <input type="text" id="inputCP" placeholder="C.P. (5 dígitos)" value="09340">
+                        <input type="text" id="inputCP" placeholder="C.P." value="09340">
                         <input type="text" id="inputTelefono" placeholder="Teléfono" value="5512345678">
                     </div>
                 </div>
-                <button class="btn-success" id="btnPagar" onclick="procesarCompra()" disabled>🛒 Confirmar y Pagar</button>
+                <button class="btn-success" id="btnPagar" onclick="procesarCompra()" disabled>🚀 Confirmar y Pagar</button>
             </div>
 
-            <div class="panel-card" style="padding: 0;">
+            <div class="panel-card" style="padding: 0; border: 1px solid #333; overflow: hidden;">
+                <div class="consola-header">Monitor de Microservicios</div>
                 <div class="consola" id="consola">
-                    <div style="color: #61afef;">> Sistema UamiShop Inicializado...</div>
+                    <div style="color: #61afef;">> Esperando transacción...</div>
                 </div>
             </div>
         </aside>
